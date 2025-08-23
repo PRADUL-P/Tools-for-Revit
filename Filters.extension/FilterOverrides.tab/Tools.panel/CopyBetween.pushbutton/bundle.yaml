@@ -1,0 +1,21 @@
+title: Copy Between 
+tooltip: >
+  Copy Filters Between Views
+
+  Copy selected filters along with their graphic overrides from one view to one or more target views.
+
+  How to Use:
+
+  1. Pick a source view from which filters will be copied.
+
+  2. Select one or more target views where the filters should be applied.
+
+  3. Choose the filters to copy from the source view.
+  
+  4. The script copies the selected filters and their overrides to all chosen target views.
+
+
+author: PRADUL P
+version: 1.0
+script: copy_between.py
+icon: icon.png   # optional

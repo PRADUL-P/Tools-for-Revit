@@ -1,0 +1,18 @@
+title: Copy same
+tooltip: >
+  Copy All Filter Overrides
+
+  Copy all graphic override properties from a source filter to one or more target filters in the active view.
+
+  How to Use:
+
+  1. Select the source filter whose overrides will be copied.
+
+  2. Select one or more target filters to apply the overrides.
+  
+  3. All overrides from the source filter are applied to the selected target filters.
+
+author: PRADUL P
+version: 1.0
+script: all_filters.py
+icon: icon.png   # optional
