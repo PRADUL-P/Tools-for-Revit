@@ -4,7 +4,7 @@ This repository contains a collection of custom tools built for Autodesk Revit u
 
 Download and extract the ZIP file into your pyRevit extensions folder:
 
-%appdata%\pyRevit\Extensions
+C:\Users\username\AppData\Roaming\pyRevit-Master\extensions
 
 Open Revit and go to:
 
