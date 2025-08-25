@@ -1,0 +1,21 @@
+title: duplicate
+tooltip: >
+  Duplicate Parameter Filter with Same Overrides
+
+  How to Use:
+  
+   Selects a source filter.
+
+  Enters a new name.
+
+   It duplicates the filter with all its categories and rules.
+
+  The current view overrides (fill color, line color, patterns, etc.) are copied exactly.
+
+  The duplicated filter is applied to the current view automatically.
+
+
+author: PRADUL P
+version: 1.0
+script: duplicate.py
+icon: icon.png   # optional

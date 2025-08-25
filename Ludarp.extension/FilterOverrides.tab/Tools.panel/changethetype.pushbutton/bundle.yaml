@@ -1,0 +1,21 @@
+title: Change the Type
+tooltip: >
+  This  allows you to customize filter graphic overrides in your current view.
+  
+  How to Use:
+
+  Filters – Select filters to modify.
+
+  Properties – Choose override properties.
+
+  Colors – Pick fill and/or line colors.
+
+  Pattern – Select a fill pattern (if needed).
+
+  Apply – Confirm and update overrides.
+ 
+
+author: PRADUL P
+version: 1.0
+script: filter_overrides.py
+icon: icon.png   # optional
