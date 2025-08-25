@@ -1,0 +1,9 @@
+title: Generate Coordinate
+tooltip: >
+  Select elements (e.g. piles), choose parameters, 
+  and export a searchable/sortable HTML report 
+  with CSV/PDF download options.
+author: PRADUL P
+version: 1.0
+script: script.py
+icon: icon.png 
