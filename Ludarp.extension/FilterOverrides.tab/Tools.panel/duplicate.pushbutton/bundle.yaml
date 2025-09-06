@@ -1,21 +1,21 @@
-title: duplicate
+title: Duplicate
 tooltip: >
   Duplicate Parameter Filter with Same Overrides
 
   How to Use:
-  
-   Selects a source filter.
 
-  Enters a new name.
+  1. Select a target view or template where the duplication will occur.  
 
-   It duplicates the filter with all its categories and rules.
+  2. Select a source filter from the project.  
 
-  The current view overrides (fill color, line color, patterns, etc.) are copied exactly.
+  3. Enter a new name for the duplicated filter.  
 
-  The duplicated filter is applied to the current view automatically.
-
+  The tool will create a new filter with the same categories and rules.  
+  It also copies all graphic overrides (fill color, line color, patterns, transparency, etc.).  
+  The duplicated filter is applied to the chosen view/template automatically.
 
 author: PRADUL P
-version: 1.0
+version: 1.1
+date: 2025-09-06
 script: duplicate.py
 icon: icon.png   # optional

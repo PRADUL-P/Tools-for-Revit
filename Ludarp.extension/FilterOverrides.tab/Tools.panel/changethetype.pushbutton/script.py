@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pyRevit script: Change Filter Pattern Colors & Patterns
+# pyRevit script: Change Filter Pattern Colors & Patterns (Pick Template/View)
 # Author: PRADUL
 
 from Autodesk.Revit.DB import *
@@ -11,17 +11,30 @@ clr.AddReference("System.Windows.Forms")
 from System.Windows.Forms import ColorDialog, DialogResult
 
 doc = revit.doc
-view = doc.ActiveView
 
 # ---------------------------
-# Collect filters in this view
+# Ask user to select target view or template
 # ---------------------------
-filters = view.GetFilters()
+views_and_templates = [v for v in FilteredElementCollector(doc).OfClass(View)]
+target_view = forms.SelectFromList.show(
+    views_and_templates,
+    name_attr="Name",
+    multiselect=False,
+    title="Pick Target View or Template"
+)
+if not target_view:
+    forms.alert("No view/template selected.")
+    script.exit()
+
+# ---------------------------
+# Collect filters in the chosen view/template
+# ---------------------------
+filters = target_view.GetFilters()
 filter_elems = [doc.GetElement(fid) for fid in filters]
 filter_names = [f.Name for f in filter_elems]
 
 if not filter_names:
-    forms.alert("No filters applied in this view.")
+    forms.alert("No filters applied in the selected view/template.")
     script.exit()
 
 # ---------------------------
@@ -91,7 +104,7 @@ if any("Fill" in pc for pc in prop_choices):
 t = Transaction(doc, "Change Filter Color & Pattern")
 t.Start()
 for f in target_elems:
-    ogs = view.GetFilterOverrides(f.Id)
+    ogs = target_view.GetFilterOverrides(f.Id)
 
     # Projection fills
     if "Projection Fill Foreground" in prop_choices:
@@ -121,17 +134,7 @@ for f in target_elems:
     if "Cut Line Color" in prop_choices:
         ogs.SetCutLineColor(new_color)
 
-    view.SetFilterOverrides(f.Id, ogs)
+    target_view.SetFilterOverrides(f.Id, ogs)
 
 t.Commit()
-
-forms.alert("Updated {} filter(s) with new color/pattern.".format(len(target_elems)), title="Done")
-
-
-
-
-
-
-#### works fine with  changing the   pattern or line  at a time same colour or one by one as selcted
-
-## can be add   differnt colur for  pattern and  lines
+forms.alert("Updated {} filter(s) in '{}' with new color/pattern.".format(len(target_elems), target_view.Name), title="Done")

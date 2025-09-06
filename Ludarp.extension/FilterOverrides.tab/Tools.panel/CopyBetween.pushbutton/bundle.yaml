@@ -1,21 +1,21 @@
-title: Copy Between 
+title: Copy Between
 tooltip: >
-  Copy Filters Between Views
+  Copy Filters Between Views/Templates
 
-  Copy selected filters along with their graphic overrides from one view to one or more target views.
+  Copy selected filters along with their graphic overrides from one
+  view or template to one or more target views/templates.
 
-  How to Use:
-
-  1. Pick a source view from which filters will be copied.
-
-  2. Select one or more target views where the filters should be applied.
-
-  3. Choose the filters to copy from the source view.
-  
-  4. The script copies the selected filters and their overrides to all chosen target views.
-
+  ### How to Use:
+  1. Pick a **source view or template** from which filters will be copied.
+  2. Select one or more **target views or templates** where the filters should be applied.
+  3. Choose the **filters to copy** from the source.
+  4. The tool will copy:
+     - Filter assignment (if not already present)
+     - All graphic overrides (colors, patterns, line styles, transparency)
+     - Visibility state (if supported in your Revit version)
 
 author: PRADUL P
-version: 1.0
+version: 1.1
+date: 2025-09-06
 script: copy_between.py
-icon: icon.png   # optional
+icon: icon.png   # optional (recommended 32x32 PNG)

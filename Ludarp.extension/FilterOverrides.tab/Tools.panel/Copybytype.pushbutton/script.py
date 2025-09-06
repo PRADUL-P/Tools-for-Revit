@@ -1,22 +1,35 @@
 # -*- coding: utf-8 -*-
-# pyRevit script: Copy Selected Filter Overrides (Final Version)
+# pyRevit script: Copy Selected Filter Overrides (Pick Template/View)
 # Author: PRADUL
 
 from Autodesk.Revit.DB import *
 from pyrevit import revit, forms, script
 
 doc = revit.doc
-view = doc.ActiveView
 
 # ---------------------------
-# Collect filters in this view
+# Ask user to select target view/template first
 # ---------------------------
-filters = view.GetFilters()
+views_and_templates = [v for v in FilteredElementCollector(doc).OfClass(View)]
+target_view = forms.SelectFromList.show(
+    views_and_templates,
+    name_attr="Name",
+    multiselect=False,
+    title="Pick Target View or Template"
+)
+if not target_view:
+    forms.alert("No view/template selected.")
+    script.exit()
+
+# ---------------------------
+# Collect filters in the chosen view/template
+# ---------------------------
+filters = target_view.GetFilters()
 filter_elems = [doc.GetElement(fid) for fid in filters]
 filter_names = [f.Name for f in filter_elems]
 
 if not filter_names:
-    forms.alert("No filters applied in this view.")
+    forms.alert("No filters applied in the selected view/template.")
     script.exit()
 
 # ---------------------------
@@ -101,85 +114,86 @@ def _getattr_safe(obj, name, default=None):
     except:
         return default
 
-def build_override_from_selection(src_ogs, options, proj_part, cut_part):
-    """Build a fresh OverrideGraphicSettings per target filter."""
-    if "Copy ALL" in options:
-        return src_ogs
-
-    ogs = OverrideGraphicSettings()
-
-    # ---- Projection Lines ----
-    if "Projection Lines" in options:
-        col = _getattr_safe(src_ogs, "ProjectionLineColor", None)
-        if col: ogs.SetProjectionLineColor(col)
-        pid = _getattr_safe(src_ogs, "ProjectionLinePatternId", ElementId.InvalidElementId)
-        if _is_valid_id(pid): ogs.SetProjectionLinePatternId(pid)
-        w = _getattr_safe(src_ogs, "ProjectionLineWeight", None)
-        if w is not None: ogs.SetProjectionLineWeight(w)
-
-    # ---- Cut Lines ----
-    if "Cut Lines" in options:
-        col = _getattr_safe(src_ogs, "CutLineColor", None)
-        if col: ogs.SetCutLineColor(col)
-        pid = _getattr_safe(src_ogs, "CutLinePatternId", ElementId.InvalidElementId)
-        if _is_valid_id(pid): ogs.SetCutLinePatternId(pid)
-        w = _getattr_safe(src_ogs, "CutLineWeight", None)
-        if w is not None: ogs.SetCutLineWeight(w)
-
-    # ---- Projection Fills / Surface ----
-    if "Projection Fills" in options:
-        if proj_part in ("fg", "both"):
-            pid = _getattr_safe(src_ogs, "SurfaceForegroundPatternId", ElementId.InvalidElementId)
-            if _is_valid_id(pid): ogs.SetSurfaceForegroundPatternId(pid)
-            col = _getattr_safe(src_ogs, "SurfaceForegroundPatternColor", None)
-            if col: ogs.SetSurfaceForegroundPatternColor(col)
-        if proj_part in ("bg", "both"):
-            pid = _getattr_safe(src_ogs, "SurfaceBackgroundPatternId", ElementId.InvalidElementId)
-            if _is_valid_id(pid): ogs.SetSurfaceBackgroundPatternId(pid)
-            col = _getattr_safe(src_ogs, "SurfaceBackgroundPatternColor", None)
-            if col: ogs.SetSurfaceBackgroundPatternColor(col)
-
-    # ---- Cut Fills ----
-    if "Cut Fills" in options:
-        if cut_part in ("fg", "both"):
-            pid = _getattr_safe(src_ogs, "CutForegroundPatternId", ElementId.InvalidElementId)
-            if _is_valid_id(pid): ogs.SetCutForegroundPatternId(pid)
-            col = _getattr_safe(src_ogs, "CutForegroundPatternColor", None)
-            if col: ogs.SetCutForegroundPatternColor(col)
-        if cut_part in ("bg", "both"):
-            pid = _getattr_safe(src_ogs, "CutBackgroundPatternId", ElementId.InvalidElementId)
-            if _is_valid_id(pid): ogs.SetCutBackgroundPatternId(pid)
-            col = _getattr_safe(src_ogs, "CutBackgroundPatternColor", None)
-            if col: ogs.SetCutBackgroundPatternColor(col)
-
-    # ---- Transparency ----
-    if "Transparency" in options:
-        tr = _getattr_safe(src_ogs, "SurfaceTransparency", None)
-        if tr is not None:
-            ogs.SetSurfaceTransparency(tr)
-
-    # ---- Halftone ----
-    if "Halftone" in options:
-        ogs.SetHalftone(_getattr_safe(src_ogs, "Halftone", False))
-
-    # ---- Detail Level ----
-    if "Detail Level" in options:
-        dl = _getattr_safe(src_ogs, "DetailLevel", None)
-        if dl is not None:
-            ogs.SetDetailLevel(dl)
-
-    return ogs
-
 # ---------------------------
-# Apply overrides per target
+# Apply overrides per target (preserve unselected properties)
 # ---------------------------
-src_ogs = view.GetFilterOverrides(source_elem.Id)
-
 t = Transaction(doc, "Copy Filter Overrides")
 t.Start()
+
+src_ogs = target_view.GetFilterOverrides(source_elem.Id)
+
 for f in target_elems:
-    new_ogs = build_override_from_selection(src_ogs, copy_options, proj_fill_part, cut_fill_part)
-    view.SetFilterOverrides(f.Id, new_ogs)
+    # Start from target's current overrides
+    target_ogs = target_view.GetFilterOverrides(f.Id)
+
+    # ---- Projection Lines ----
+    if "Projection Lines" in copy_options:
+        col = _getattr_safe(src_ogs, "ProjectionLineColor", None)
+        if col: target_ogs.SetProjectionLineColor(col)
+        pid = _getattr_safe(src_ogs, "ProjectionLinePatternId", ElementId.InvalidElementId)
+        if _is_valid_id(pid): target_ogs.SetProjectionLinePatternId(pid)
+        w = _getattr_safe(src_ogs, "ProjectionLineWeight", None)
+        if w is not None: target_ogs.SetProjectionLineWeight(w)
+
+    # ---- Cut Lines ----
+    if "Cut Lines" in copy_options:
+        col = _getattr_safe(src_ogs, "CutLineColor", None)
+        if col: target_ogs.SetCutLineColor(col)
+        pid = _getattr_safe(src_ogs, "CutLinePatternId", ElementId.InvalidElementId)
+        if _is_valid_id(pid): target_ogs.SetCutLinePatternId(pid)
+        w = _getattr_safe(src_ogs, "CutLineWeight", None)
+        if w is not None: target_ogs.SetCutLineWeight(w)
+
+    # ---- Projection Fills ----
+    if "Projection Fills" in copy_options:
+        if proj_fill_part in ("fg", "both"):
+            pid = _getattr_safe(src_ogs, "SurfaceForegroundPatternId", None)
+            if _is_valid_id(pid): target_ogs.SetSurfaceForegroundPatternId(pid)
+            col = _getattr_safe(src_ogs, "SurfaceForegroundPatternColor", None)
+            if col: target_ogs.SetSurfaceForegroundPatternColor(col)
+        if proj_fill_part in ("bg", "both"):
+            pid = _getattr_safe(src_ogs, "SurfaceBackgroundPatternId", None)
+            if _is_valid_id(pid): target_ogs.SetSurfaceBackgroundPatternId(pid)
+            col = _getattr_safe(src_ogs, "SurfaceBackgroundPatternColor", None)
+            if col: target_ogs.SetSurfaceBackgroundPatternColor(col)
+
+    # ---- Cut Fills ----
+    if "Cut Fills" in copy_options:
+        if cut_fill_part in ("fg", "both"):
+            pid = _getattr_safe(src_ogs, "CutForegroundPatternId", None)
+            if _is_valid_id(pid): target_ogs.SetCutForegroundPatternId(pid)
+            col = _getattr_safe(src_ogs, "CutForegroundPatternColor", None)
+            if col: target_ogs.SetCutForegroundPatternColor(col)
+        if cut_fill_part in ("bg", "both"):
+            pid = _getattr_safe(src_ogs, "CutBackgroundPatternId", None)
+            if _is_valid_id(pid): target_ogs.SetCutBackgroundPatternId(pid)
+            col = _getattr_safe(src_ogs, "CutBackgroundPatternColor", None)
+            if col: target_ogs.SetCutBackgroundPatternColor(col)
+
+    # ---- Transparency ----
+    if "Transparency" in copy_options:
+        tr = _getattr_safe(src_ogs, "SurfaceTransparency", None)
+        if tr is not None:
+            target_ogs.SetSurfaceTransparency(tr)
+
+    # ---- Halftone ----
+    if "Halftone" in copy_options:
+        target_ogs.SetHalftone(_getattr_safe(src_ogs, "Halftone", False))
+
+    # ---- Detail Level ----
+    if "Detail Level" in copy_options:
+        dl = _getattr_safe(src_ogs, "DetailLevel", None)
+        if dl is not None:
+            target_ogs.SetDetailLevel(dl)
+
+    # Apply updated overrides to target filter
+    target_view.SetFilterOverrides(f.Id, target_ogs)
+
 t.Commit()
 
-forms.alert("Overrides copied from '{}' → {} filter(s).".format(source_name, len(target_elems)), title="Done")
+forms.alert(
+    "Overrides copied from '{}' → {} filter(s) in '{}'.".format(
+        source_name, len(target_elems), target_view.Name
+    ),
+    title="Done"
+)

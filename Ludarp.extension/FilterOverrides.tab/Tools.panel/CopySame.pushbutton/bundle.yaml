@@ -1,18 +1,22 @@
-title: Copy same
+title: Copy Same
 tooltip: >
   Copy All Filter Overrides
 
-  Copy all graphic override properties from a source filter to one or more target filters in the active view.
+  Duplicate all graphical override properties from a source filter
+  to one or more target filters within the active view or template.
 
-  How to Use:
-
-  1. Select the source filter whose overrides will be copied.
-
-  2. Select one or more target filters to apply the overrides.
-  
-  3. All overrides from the source filter are applied to the selected target filters.
+  ### How to Use:
+  1. Select the **source filter** whose overrides will be copied.
+  2. Select one or more **target filters** to apply the overrides.
+  3. The following properties are copied:
+     - Colors (projection/surface/foreground/background)
+     - Patterns (fill/halftone)
+     - Line styles
+     - Transparency
+     - Visibility state (if supported)
 
 author: PRADUL P
-version: 1.0
+version: 1.1
+date: 2025-09-06
 script: all_filters.py
-icon: icon.png   # optional
+icon: icon.png   # optional (recommended 32x32 PNG)

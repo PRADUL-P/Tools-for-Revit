@@ -1,15 +1,25 @@
 # -*- coding: utf-8 -*-
-# pyRevit Script: Duplicate Parameter Filter with Same Overrides
+# pyRevit Script: Duplicate Parameter Filter with Same Overrides (View/Template Aware)
 # Author: PRADUL + ChatGPT
 
 from Autodesk.Revit.DB import *
 from pyrevit import revit, forms, script
 
 doc = revit.doc
-view = doc.ActiveView
 
 # -------------------------
-# Collect all parameter filters
+# Select target view/template first
+# -------------------------
+views_and_templates = [v for v in FilteredElementCollector(doc).OfClass(View)]
+target_view = forms.SelectFromList.show(
+    views_and_templates, name_attr="Name", multiselect=False, title="Pick Target View/Template"
+)
+if not target_view:
+    forms.alert("No target view/template selected")
+    script.exit()
+
+# -------------------------
+# Collect all parameter filters in project
 # -------------------------
 collector = FilteredElementCollector(doc).OfClass(ParameterFilterElement)
 all_filters = list(collector)
@@ -43,12 +53,12 @@ if not new_name:
     script.exit()
 
 # -------------------------
-# Get overrides from current view
+# Try to get overrides from target (if filter exists there)
 # -------------------------
 try:
-    current_override = view.GetFilterOverrides(source_filter.Id)
+    current_override = target_view.GetFilterOverrides(source_filter.Id)
 except:
-    current_override = OverrideGraphicSettings()  # fallback empty override
+    current_override = OverrideGraphicSettings()  # empty fallback
 
 # -------------------------
 # Duplicate filter and apply overrides
@@ -56,26 +66,22 @@ except:
 t = Transaction(doc, "Duplicate Filter with Overrides")
 t.Start()
 try:
-    # Duplicate filter
+    # Duplicate filter definition
     cats = source_filter.GetCategories()
     elem_filter = source_filter.GetElementFilter()
     new_filter = ParameterFilterElement.Create(doc, new_name, cats, elem_filter)
 
-    # Apply the same override as source filter
-    view.SetFilterOverrides(new_filter.Id, current_override)
+    # Apply override
+    target_view.SetFilterOverrides(new_filter.Id, current_override)
 
-    # Apply to current view
-    if not view.IsFilterApplied(new_filter.Id):
-        view.AddFilter(new_filter.Id)
+    # Add filter if not already applied
+    if not target_view.GetFilters().Contains(new_filter.Id):
+        target_view.AddFilter(new_filter.Id)
 
     t.Commit()
-    forms.alert("✅ Filter '{}' duplicated as '{}' with same overrides.".format(source_name, new_name))
+    forms.alert("✅ Filter '{}' duplicated as '{}' with same overrides in '{}'.".format(
+        source_name, new_name, target_view.Name))
 
 except Exception as e:
     t.RollBack()
     forms.alert("❌ Failed to duplicate filter: {}".format(e))
-
-
-
-
-#### works fine with coping the same filters 

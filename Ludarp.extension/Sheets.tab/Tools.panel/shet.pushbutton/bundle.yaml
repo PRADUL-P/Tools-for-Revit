@@ -1,7 +1,0 @@
-title: sheets
-tooltip: >
-  Arrange sheet views in a grid within a defined boundary
-author: PRADUL P
-version: 1.0
-script: script.py
-icon: icon.png 

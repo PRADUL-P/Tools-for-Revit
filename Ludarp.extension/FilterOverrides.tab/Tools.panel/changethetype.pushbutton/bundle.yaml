@@ -1,21 +1,23 @@
-title: Change the Type
+title: Change Filter Colors
 tooltip: >
-  This  allows you to customize filter graphic overrides in your current view.
-  
+  This allows you to customize filter graphic overrides in a selected view or template.
+
   How to Use:
 
-  Filters – Select filters to modify.
+  1. Pick a **target view or template** where you want to apply the changes.
 
-  Properties – Choose override properties.
+  2. Select the **filters** to modify.
 
-  Colors – Pick fill and/or line colors.
+  3. Choose **override properties** (projection/cut fills, line colors).
 
-  Pattern – Select a fill pattern (if needed).
+  4. Pick **colors** for fills and/or lines using the color picker.
 
-  Apply – Confirm and update overrides.
- 
+  5. Select a **fill pattern** if needed.
+
+  6. Apply changes – the selected filters in the chosen view/template are updated.
 
 author: PRADUL P
-version: 1.0
+version: 1.1
+date: 2025-09-07
 script: filter_overrides.py
 icon: icon.png   # optional
