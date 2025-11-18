@@ -1,0 +1,25 @@
+title: Change by type
+tooltip: >
+  Copy Selected Filter Overrides
+
+  Copy specific or all graphic override properties from a source filter to one or more target filters in the active view.
+
+  How to Use:
+
+  1. Pick the target view or template where the filters are applied.
+
+  2. Select the source filter whose overrides you want to copy.
+
+  3. Select one or more target filters to apply the overrides.
+
+  4. Choose which override properties to copy: Projection Lines, Projection Fills, Cut Lines, Cut Fills, Transparency, Halftone, Detail Level, or Copy ALL.
+
+  5. For Projection or Cut Fills, specify whether to copy Foreground, Background, or Both if not copying all.
+
+  6. The selected overrides are applied to the target filters while preserving any other existing properties.
+
+author: PRADUL P
+version: 1.1
+date: 2025-09-07
+script: copy_selected_filter_overrides.py
+icon: icon.png  # optional

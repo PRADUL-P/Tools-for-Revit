@@ -1,0 +1,17 @@
+title: Reset Filters
+tooltip: >
+  Removes all graphic overrides applied by the selected filters in the active view. 
+
+  Restores the filters to Revit’s default display settings.
+
+  How to Use:
+
+  1. Select one or more filters in the active view to reset.
+  
+  2. All overrides are removed and default display settings restored.
+ 
+
+author: PRADUL P
+version: 1.0
+script: reset.py
+icon: icon.png   # optional
