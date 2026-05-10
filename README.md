@@ -4,6 +4,15 @@ A powerful pyRevit extension designed to streamline the management of **View Fil
 
 ---
 
+## ✨ Key Features
+
+- **📂 Smart Categorization**: All view selection menus are automatically grouped by category (e.g., Floor Plans, Elevations, 3D Views) for rapid navigation.
+- **🏷️ Clean Naming**: Automatically converts technical `ThreeD` labels to clean `3D` tags in the UI.
+- **🎭 Emoji-Enhanced UI**: Uses intuitive icons and emojis to help you distinguish between views, folders, and actions at a glance.
+- **⚡ Bulk Operations**: Update multiple filters and multiple views simultaneously, saving hours of manual work.
+
+---
+
 ## 🛠️ Tool Guide
 
 ### 📂 Primary Tools
@@ -11,7 +20,7 @@ A powerful pyRevit extension designed to streamline the management of **View Fil
 #### 🔄 Copy Between Views
 *Copy Filters and Overrides effortlessly.*
 - **Step 1:** Pick the **SOURCE** View or Template.
-- **Step 2:** Select one or more **TARGET** Views or Templates.
+- **Step 2:** Select one or more **TARGET** Views or Templates (using the categorized picker).
 - **Step 3:** Choose exactly which filters to copy.
 - **Features:** Adds missing filters, synchronizes colors/lines/patterns, and retains visibility states.
 
@@ -38,7 +47,7 @@ A powerful pyRevit extension designed to streamline the management of **View Fil
 - **Step 1:** Pick the View/Template containing the filter.
 - **Step 2:** Pick the Filter to duplicate.
 - **Step 3:** Enter the new name.
-- **Result:** Automatically preserves all graphic overrides!
+- **Result:** Automatically preserves all graphic overrides from the original!
 
 #### 🧹 Reset Filters
 *Clean up your views.*
@@ -58,7 +67,7 @@ A powerful pyRevit extension designed to streamline the management of **View Fil
 ---
 
 ## 📖 Documentation
-Detailed documentation is available here: [Google Docs](https://docs.google.com/document/d/1nRQzLRm3OhiO2Sk9U9_LbsX1GeMMbyRr5TSLWfxd8Bk/edit?usp=sharing)
+Detailed documentation and video guides are available here: [Google Docs](https://docs.google.com/document/d/1nRQzLRm3OhiO2Sk9U9_LbsX1GeMMbyRr5TSLWfxd8Bk/edit?usp=sharing)
 
 ---
 
