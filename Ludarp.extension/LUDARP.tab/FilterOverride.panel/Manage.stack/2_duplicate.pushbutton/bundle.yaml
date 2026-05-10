@@ -1,0 +1,10 @@
+title: Duplicate Filter
+tooltip: >
+  Clone parameter filters along with their categories and rules.
+description: |
+  Create a perfect copy of an existing filter. Automatically preserves 
+  all graphic overrides from the original!
+author: PRADUL P
+version: 1.2
+date: 2026-05-10
+icon: icon.png

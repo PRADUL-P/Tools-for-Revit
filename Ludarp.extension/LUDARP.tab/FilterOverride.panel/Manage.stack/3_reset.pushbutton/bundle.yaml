@@ -1,0 +1,10 @@
+title: Reset Filters
+tooltip: >
+  Clear all graphic overrides from selected filters.
+description: |
+  Restore selected filters to their project default settings while 
+  keeping them in the view.
+author: PRADUL P
+version: 1.2
+date: 2026-05-10
+icon: icon.png

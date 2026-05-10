@@ -1,24 +1,23 @@
 title: Calculator
-tooltip: Extract and calculate values from Levels, Dimensions, Spot Elevations, or points.
-  
-  Description 
+tooltip: >
+  Extract and calculate values from Levels, Dimensions, Spot Elevations, or points.
+  Includes unit conversion and math operations.
+
+description: |
   Quickly measure and calculate numeric values by picking two Revit elements 
-  (Levels, Dimensions, Spot Elevations) or points. Supports math operations, 
-  unit conversion, and copying results to clipboard.
+  (Levels, Dimensions, Spot Elevations) or points. 
 
-  How to Use
-  1. Click the tool button.
-  2. Pick the first source (Level, Dimension, Spot, or point).
-  3. Pick the second source.
-  4. Choose an operation - A-B, A+B, A*B, A/B.
-  5. View result in project units.
-  6. Options
-       - Convert units (m, cm, mm, ft, fi)
-       - Copy Result copies the numeric value
-       - Close - exit
+  Workflow:
+  1. Pick the first source (Level, Dimension, Spot, or point).
+  2. Pick the second source.
+  3. Choose an operation: A-B, A+B, A*B, A/B.
+  4. Options:
+     - Convert units (m, cm, mm, ft, fi)
+     - Copy numeric result to clipboard.
 
-# tags: [calculator, elevation, dimension, units, measure]
-icon: icon.png
+# Metadata
 author: PRADUL P
 version: 1.2
 date: 2026-05-10
+icon: icon.png
+tags: [calculator, elevation, dimension, units, measure]

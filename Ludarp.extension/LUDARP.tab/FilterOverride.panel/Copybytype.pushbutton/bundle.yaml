@@ -1,0 +1,10 @@
+title: Copy Overrides
+tooltip: >
+  Granularly copy specific graphic properties from one filter to another.
+description: |
+  Transfer specific properties (Lines, Fills, Transparency) from a "Source" 
+  filter to one or more "Target" filters within the same view.
+author: PRADUL P
+version: 1.2
+date: 2026-05-10
+icon: icon.png

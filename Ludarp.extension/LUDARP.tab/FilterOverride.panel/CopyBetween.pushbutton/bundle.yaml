@@ -1,0 +1,18 @@
+title: Copy Between
+tooltip: >
+  Synchronize filters and overrides between source and multiple target views.
+
+description: |
+  Effortlessly transfer selected filters and their graphic overrides from a 
+  source view/template to one or more targets.
+
+  Workflow:
+  1. Select the Source view or template.
+  2. Select one or more Target views/templates.
+  3. Choose exactly which filters to copy.
+
+author: PRADUL P
+version: 1.2
+date: 2026-05-10
+icon: icon.png
+tags: [filter, override, synchronize, template]

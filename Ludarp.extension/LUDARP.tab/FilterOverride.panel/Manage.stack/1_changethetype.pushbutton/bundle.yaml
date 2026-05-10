@@ -1,0 +1,10 @@
+title: Change Colors
+tooltip: >
+  Bulk update colors and fill patterns for multiple filters.
+description: |
+  Select target filters and apply new colors and patterns to their 
+  projection or cut graphics in seconds.
+author: PRADUL P
+version: 1.2
+date: 2026-05-10
+icon: icon.png
