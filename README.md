@@ -70,7 +70,7 @@ A powerful pyRevit extension designed to streamline the management of **View Fil
 1. Download and extract the repository into your pyRevit extensions folder:
    `C:\Users\username\AppData\Roaming\pyRevit-Master\extensions`
 2. Open Revit and go to **pyRevit > Reload**.
-3. You should now see the **Filter Override** tab in your ribbon.
+3. You should now see the **LUDARP** tab in your ribbon.
 
 ---
 

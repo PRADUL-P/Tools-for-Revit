@@ -2,7 +2,7 @@
 
 **Author:** PRADUL P  
 **Date:** 2026-05-10  
-**Version:** 1.2  
+**Version:** 1.4  
 
 ---
 
@@ -28,7 +28,7 @@ This toolkit provides a professional suite of pyRevit scripts to manage, synchro
 ---
 
 ## Toolbar Overview
-The scripts are organized under the **FilterOverride** tab in the pyRevit ribbon. The toolbar is divided into primary tools and a specialized **Manage** stack.
+The scripts are organized under the **LUDARP** tab in the pyRevit ribbon. The toolbar is divided into the **FilterOverride** and **Calculator** panels, with a specialized **Manage** stack.
 
 | Tool Name | Description |
 | :--- | :--- |
@@ -119,6 +119,7 @@ The scripts are organized under the **FilterOverride** tab in the pyRevit ribbon
 | 1.1 | 2025-09-07 | PRADUL P | Added detailed step-by-step procedures and examples. |
 | 1.2 | 2026-05-10 | PRADUL P | **Major Update**: Renamed tab to `FilterOverride`, restructured tools into the `Manage` stack, and optimized tool workflows. |
 | 1.3 | 2026-05-10 | PRADUL P | Added **Calculator** panel and **Elevation Calculator** tool. |
+| 1.4 | 2026-05-10 | PRADUL P | Renamed Tab to **LUDARP** and Primary Panel to **FilterOverride**. |
 
 ---
 *Developed with ❤️ for BIM Efficiency.*
