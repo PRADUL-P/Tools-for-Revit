@@ -1,0 +1,23 @@
+title: Elevation Calculator
+tooltip: Pick two elevation points and calculate differences, sums, or conversions.
+  
+  Description 
+  Quickly measure elevation values by picking two Levels, Spot Elevations,
+  or elements with Z-coordinates. Supports conversion and copying results.
+
+  How to Use
+  1. Click the tool button.
+  2. Pick the first elevation source (Level, Spot, element, or point).
+  3. Pick the second elevation source.
+  4. Choose an operation - A-B, A+B, A*B, A/B.
+  5. View result in project units.
+  6. Options
+       - Convert change units (ft, m, cm, mm)
+       - Copy Result copies only the numeric value
+       - Close - exit
+
+# tags: [elevation, calc, units, measure]
+icon: icon.png
+author: PRADUL P
+version: 1.1
+date: 2025-11-21
