@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-📐 LUDARP Elevation Calculator v1.5
+📐 LUDARP Elevation Calculator v1.6
 Robust extraction + Unit Conversion + Math Operations.
-Handles Levels, Spot Dimensions, Dimensions, and Point-based elements.
+Fixed: Unit conversion now correctly respects selected target units.
 """
 __title__ = "Elevation\nCalculator"
 __author__ = "PRADUL P / Antigravity"
@@ -11,7 +11,7 @@ import math
 from pyrevit import revit, forms, script
 from Autodesk.Revit.DB import (
     Level, LocationPoint, SpotDimension, Dimension, BuiltInParameter,
-    SpecTypeId, UnitTypeId, UnitFormatUtils
+    SpecTypeId, UnitTypeId, UnitFormatUtils, FormatOptions
 )
 from Autodesk.Revit.Exceptions import OperationCanceledException
 from Autodesk.Revit.UI.Selection import ObjectType
@@ -41,23 +41,24 @@ def detect_project_unit(doc):
         pass
     return "m"
 
-def convert_units(value_feet, target_unit):
-    """Convert value from Internal Feet to target unit string."""
-    if target_unit == "ft": return value_feet
-    if target_unit == "m": return value_feet * 0.3048
-    if target_unit == "cm": return value_feet * 30.48
-    if target_unit == "mm": return value_feet * 304.8
-    if target_unit == "fi": return value_feet # Formatting handles this
-    return value_feet
-
 def format_value(doc, value_feet, unit_key):
-    """Format numeric value with Revit's unit formatter."""
+    """Format numeric value into a specific unit using Revit's engine."""
     try:
-        units = doc.GetUnits()
-        uid = UNITS.get(unit_key, {}).get("id", UnitTypeId.Meters)
-        return UnitFormatUtils.Format(units, SpecTypeId.Length, value_feet, False)
-    except:
-        return "{:.3f}".format(convert_units(value_feet, unit_key))
+        # Create custom format options for the target unit
+        target_uid = UNITS.get(unit_key, {}).get("id", UnitTypeId.Meters)
+        fo = FormatOptions(target_uid)
+        
+        # Adjust accuracy based on unit
+        if unit_key == "m": fo.Accuracy = 0.001
+        elif unit_key in ["cm", "mm"]: fo.Accuracy = 1.0
+        
+        return UnitFormatUtils.Format(doc.GetUnits(), SpecTypeId.Length, value_feet, False, fo)
+    except Exception as e:
+        # Fallback manual conversion if Revit API fails
+        factors = {"m": 0.3048, "cm": 30.48, "mm": 304.8, "ft": 1.0, "fi": 1.0}
+        factor = factors.get(unit_key, 1.0)
+        val = value_feet * factor
+        return "{:.3f} {}".format(val, unit_key)
 
 def safe_pick_object(uidoc, prompt="🖱️ Pick element"):
     try:
@@ -91,12 +92,10 @@ def extract_elevation(doc, reference):
     # 2. Spot Dimensions
     if isinstance(el, SpotDimension):
         try:
-            # Try to get the origin Z coordinate
             if hasattr(el, "Origin"):
                 return el.Origin.Z
         except:
             pass
-        # Fallback to parameter
         p = el.get_Parameter(BuiltInParameter.DIM_VALUE_LENGTH)
         if p: return p.AsDouble()
 
@@ -105,25 +104,24 @@ def extract_elevation(doc, reference):
         try:
             if el.Value is not None:
                 return el.Value
-            # Try segments for multi-segment dimensions
             if hasattr(el, "Segments") and el.Segments.Size > 0:
                 return el.Segments.get_Item(0).Value
         except:
             pass
 
-    # 4. Elements with LocationPoint (Family Instances, etc.)
+    # 4. Elements with LocationPoint
     loc = getattr(el, "Location", None)
     if isinstance(loc, LocationPoint):
         return loc.Point.Z
 
-    # 5. Parameter Search (Common Elevation Params)
+    # 5. Parameter Search
     params = ["Elevation", "Elevation from Level", "ELEVATION", "Offset"]
     for p_name in params:
         p = el.LookupParameter(p_name)
         if p and p.StorageType.ToString() == "Double":
             return p.AsDouble()
 
-    # 6. Fallback: User Pick Point
+    # 6. Fallback
     choice = forms.alert(
         "Could not auto-extract elevation from '{}'.\nWould you like to pick a manual point?".format(el.Name),
         options=["Yes, pick point", "No, cancel"],
@@ -150,7 +148,7 @@ def conversion_loop(doc, value_feet):
         formatted = format_value(doc, value_feet, unit_key)
         
         res = forms.alert(
-            "💎 Converted Value:\n\n{0}\n\nUnit: {1}".format(formatted, choice),
+            "💎 Converted Value:\n\n{0}".format(formatted),
             title="Conversion Result",
             options=["📋 Copy Value", "🔄 Convert Again", "❌ Close"]
         )
