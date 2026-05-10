@@ -1,230 +1,227 @@
 # -*- coding: utf-8 -*-
 """
-Elevation Calculator — robust extraction + Convert / Copy / Go Back UI
-Copies numeric only. Handles Levels, SpotDimensions, Dimensions, elements with LocationPoint,
-and fallback to pick-point. After Convert shows: Copy | Go Back | Close.
+📐 LUDARP Elevation Calculator v1.5
+Robust extraction + Unit Conversion + Math Operations.
+Handles Levels, Spot Dimensions, Dimensions, and Point-based elements.
 """
+__title__ = "Elevation\nCalculator"
+__author__ = "PRADUL P / Antigravity"
+
 import math
 from pyrevit import revit, forms, script
 from Autodesk.Revit.DB import (
     Level, LocationPoint, SpotDimension, Dimension, BuiltInParameter,
-    SpecTypeId, UnitTypeId
+    SpecTypeId, UnitTypeId, UnitFormatUtils
 )
 from Autodesk.Revit.Exceptions import OperationCanceledException
 from Autodesk.Revit.UI.Selection import ObjectType
 
-# ---------- helpers ----------
+# ---------- Configuration ----------
+UNITS = {
+    "m": {"label": "Meters", "id": UnitTypeId.Meters},
+    "cm": {"label": "Centimeters", "id": UnitTypeId.Centimeters},
+    "mm": {"label": "Millimeters", "id": UnitTypeId.Millimeters},
+    "ft": {"label": "Feet", "id": UnitTypeId.Feet},
+    "fi": {"label": "Fractional Inches", "id": UnitTypeId.FeetFractionalInches}
+}
+
+# ---------- Helpers ----------
 def detect_project_unit(doc):
     try:
-        fmt = doc.GetUnits().GetFormatOptions(SpecTypeId.Length)
+        units = doc.GetUnits()
+        fmt = units.GetFormatOptions(SpecTypeId.Length)
         uid = fmt.GetUnitTypeId()
+        
         if uid == UnitTypeId.Meters: return "m"
         if uid == UnitTypeId.Centimeters: return "cm"
         if uid == UnitTypeId.Millimeters: return "mm"
-        if uid in (UnitTypeId.Feet, UnitTypeId.FeetFractionalInches): return "ft"
+        if uid == UnitTypeId.Feet: return "ft"
+        if uid == UnitTypeId.FeetFractionalInches: return "fi"
     except:
         pass
-    return "cm"
+    return "m"
 
-def from_feet(value_feet, unit):
-    if unit == "ft": return value_feet
-    if unit == "m": return value_feet * 0.3048
-    if unit == "cm": return value_feet * 30.48
-    if unit == "mm": return value_feet * 304.8
+def convert_units(value_feet, target_unit):
+    """Convert value from Internal Feet to target unit string."""
+    if target_unit == "ft": return value_feet
+    if target_unit == "m": return value_feet * 0.3048
+    if target_unit == "cm": return value_feet * 30.48
+    if target_unit == "mm": return value_feet * 304.8
+    if target_unit == "fi": return value_feet # Formatting handles this
     return value_feet
 
-def safe_pick_object(uidoc, prompt="Pick element"):
+def format_value(doc, value_feet, unit_key):
+    """Format numeric value with Revit's unit formatter."""
+    try:
+        units = doc.GetUnits()
+        uid = UNITS.get(unit_key, {}).get("id", UnitTypeId.Meters)
+        return UnitFormatUtils.Format(units, SpecTypeId.Length, value_feet, False)
+    except:
+        return "{:.3f}".format(convert_units(value_feet, unit_key))
+
+def safe_pick_object(uidoc, prompt="🖱️ Pick element"):
     try:
         return uidoc.Selection.PickObject(ObjectType.Element, prompt)
     except OperationCanceledException:
         return None
     except Exception as e:
-        forms.alert("Selection error:\n{}".format(e), title="Selection error")
+        forms.alert("Selection error:\n{}".format(e), title="Selection Error")
         return None
 
-def safe_pick_point(uidoc, prompt="Pick point"):
+def safe_pick_point(uidoc, prompt="📍 Pick point"):
     try:
         return uidoc.Selection.PickPoint(prompt)
     except OperationCanceledException:
         return None
     except Exception as e:
-        forms.alert("Point pick error:\n{}".format(e), title="Selection error")
+        forms.alert("Point pick error:\n{}".format(e), title="Selection Error")
         return None
 
-def format_num(v, dec=6):
-    s = ("{:.%df}" % dec).format(v)
-    return s.rstrip("0").rstrip(".") if "." in s else s
-
-# Robust extraction: try many sensible fallbacks
+# ---------- Extraction Logic ----------
 def extract_elevation(doc, reference):
     try:
         el = doc.GetElement(reference)
-    except Exception:
+    except:
         return None
 
-    # Level
+    # 1. Levels
     if isinstance(el, Level):
         return el.Elevation
 
-    # SpotDimension (origin)
+    # 2. Spot Dimensions
     if isinstance(el, SpotDimension):
         try:
+            # Try to get the origin Z coordinate
             if hasattr(el, "Origin"):
                 return el.Origin.Z
         except:
             pass
-        # some SpotDimension expose value parameter
-        try:
-            p = el.get_Parameter(BuiltInParameter.DIM_VALUE_LENGTH)
-            if p: return p.AsDouble()
-        except:
-            pass
+        # Fallback to parameter
+        p = el.get_Parameter(BuiltInParameter.DIM_VALUE_LENGTH)
+        if p: return p.AsDouble()
 
-    # Dimension (text/linear dimension): try segment value(s)
+    # 3. Dimensions
     if isinstance(el, Dimension):
         try:
             if el.Value is not None:
                 return el.Value
-            segs = getattr(el, "Segments", None)
-            if segs and segs.Size > 0:
-                first = segs.get_Item(0)
-                if first and getattr(first, "Value", None) is not None:
-                    return first.Value
+            # Try segments for multi-segment dimensions
+            if hasattr(el, "Segments") and el.Segments.Size > 0:
+                return el.Segments.get_Item(0).Value
         except:
             pass
 
-    # Any element with LocationPoint
+    # 4. Elements with LocationPoint (Family Instances, etc.)
     loc = getattr(el, "Location", None)
     if isinstance(loc, LocationPoint):
-        try:
-            return loc.Point.Z
-        except:
-            pass
+        return loc.Point.Z
 
-    # Some annotations: try common elevation param names (best-effort)
-    try:
-        for pname in ("Elevation", "ELEVATION", "Level", "Elevation Value"):
-            p = el.LookupParameter(pname) if hasattr(el, "LookupParameter") else None
-            if p and p.StorageType.ToString() in ("Double","Double"):  # best-effort
-                try:
-                    val = p.AsDouble()
-                    if val is not None:
-                        return val
-                except:
-                    pass
-    except:
-        pass
+    # 5. Parameter Search (Common Elevation Params)
+    params = ["Elevation", "Elevation from Level", "ELEVATION", "Offset"]
+    for p_name in params:
+        p = el.LookupParameter(p_name)
+        if p and p.StorageType.ToString() == "Double":
+            return p.AsDouble()
 
-    # Last fallback: ask user to pick a point
-    pt = safe_pick_point(revit.uidoc, "Could not read element elevation. Pick a 3D point for fallback.")
-    if pt:
-        return pt.Z
+    # 6. Fallback: User Pick Point
+    choice = forms.alert(
+        "Could not auto-extract elevation from '{}'.\nWould you like to pick a manual point?".format(el.Name),
+        options=["Yes, pick point", "No, cancel"],
+        title="Extraction Fallback"
+    )
+    if choice == "Yes, pick point":
+        pt = safe_pick_point(revit.uidoc, "📍 Pick a point to define elevation")
+        if pt: return pt.Z
 
     return None
 
-# Conversion UI loop: after converting, show Copy | Go Back | Close
-def conversion_and_copy_loop(result_ft):
+# ---------- UI Loops ----------
+def conversion_loop(doc, value_feet):
     while True:
-        tgt = forms.CommandSwitchWindow.show(["ft","m","cm","mm"], message="Convert result to:")
-        if not tgt:
-            return  # user cancelled conversion
+        options = {UNITS[k]["label"]: k for k in UNITS}
+        choice = forms.SelectFromList.show(
+            sorted(options.keys()), 
+            title="🎯 Convert Result To", 
+            multiselect=False
+        )
+        if not choice: return
 
-        converted = from_feet(result_ft, tgt)
-        conv_str = format_num(converted)
-
-        # show converted and offer choices: Copy, Go Back (choose another unit), Close
-        choice = forms.alert(
-            "Converted: {val} {u}\n\nChoose:".format(val=conv_str, u=tgt),
-            title="Converted",
-            options=["Copy", "Go Back", "Close"]
+        unit_key = options[choice]
+        formatted = format_value(doc, value_feet, unit_key)
+        
+        res = forms.alert(
+            "💎 Converted Value:\n\n{0}\n\nUnit: {1}".format(formatted, choice),
+            title="Conversion Result",
+            options=["📋 Copy Value", "🔄 Convert Again", "❌ Close"]
         )
 
-        if choice == "Copy":
-            try:
-                script.clipboard_copy(conv_str)
-                forms.alert("Copied: {} {}".format(conv_str, tgt), title="Copied")
-            except Exception:
-                forms.alert("Could not copy value:\n{}".format(conv_str), title="Copy failed")
+        if res == "📋 Copy Value":
+            script.clipboard_copy(formatted)
+            forms.toast("Value copied to clipboard!")
             return
-        if choice == "Close":
+        if res == "❌ Close":
             return
-        # else "Go Back" -> loop again to choose new target unit
 
-# ---------- main ----------
+# ---------- Main Execution ----------
 def main():
     doc = revit.doc
     uidoc = revit.uidoc
 
-    # pick A and B robustly
-    refA = safe_pick_object(uidoc, "Pick first elevation (Level / Spot / Dimension / element)")
-    if not refA:
-        return
-    refB = safe_pick_object(uidoc, "Pick second elevation (Level / Spot / Dimension / element)")
-    if not refB:
-        return
-
+    # Step 1: Pick Elevations
+    refA = safe_pick_object(uidoc, "1️⃣ Pick First Element (Level/Spot/Dimension)")
+    if not refA: return
+    
     A_ft = extract_elevation(doc, refA)
+    if A_ft is None: return
+
+    refB = safe_pick_object(uidoc, "2️⃣ Pick Second Element (Level/Spot/Dimension)")
+    if not refB: return
+    
     B_ft = extract_elevation(doc, refB)
+    if B_ft is None: return
 
-    if A_ft is None or B_ft is None:
-        forms.alert("Could not extract elevation from one or both picks.\nTry picking the actual element or use pick-point fallback.", title="Extraction failed")
+    # Step 2: Math Operation
+    ops = {
+        "➕ Addition (A+B)": lambda a, b: a + b,
+        "➖ Subtraction (A-B)": lambda a, b: a - b,
+        "✖️ Multiplication (A*B)": lambda a, b: a * b,
+        "➗ Division (A/B)": lambda a, b: a / b if abs(b) > 1e-9 else None
+    }
+    
+    op_choice = forms.CommandSwitchWindow.show(sorted(ops.keys()), message="🛠️ Choose Operation:")
+    if not op_choice: return
+
+    res_ft = ops[op_choice](A_ft, B_ft)
+    if res_ft is None:
+        forms.alert("Error: Division by zero!", title="Math Error")
         return
 
-    # ask operation
-    op = forms.CommandSwitchWindow.show(["A - B","A + B","A * B","A / B"], message="Choose operation:")
-    if not op:
-        return
+    # Step 3: Display Results
+    proj_unit = detect_project_unit(doc)
+    A_fmt = format_value(doc, A_ft, proj_unit)
+    B_fmt = format_value(doc, B_ft, proj_unit)
+    R_fmt = format_value(doc, res_ft, proj_unit)
 
-    op_names = {"A - B":"Subtraction", "A + B":"Addition", "A * B":"Multiplication", "A / B":"Division"}
-    opname = op_names.get(op, "")
-
-    # compute safely
-    try:
-        if op == "A - B":
-            res_ft = A_ft - B_ft
-        elif op == "A + B":
-            res_ft = A_ft + B_ft
-        elif op == "A * B":
-            res_ft = A_ft * B_ft
-        else:
-            if abs(B_ft) < 1e-9:
-                forms.alert("Cannot divide by zero.", title="Error")
-                return
-            res_ft = A_ft / B_ft
-    except Exception as e:
-        forms.alert("Math error:\n{}".format(e), title="Error")
-        return
-
-    # display with unit and operation text and show Convert / Copy / Close
-    unit = detect_project_unit(doc)
-    A_u = from_feet(A_ft, unit); B_u = from_feet(B_ft, unit); R_u = from_feet(res_ft, unit)
     msg = (
-        "Mode: Elevation\n"
-        "Operation: {op} ({opname})\n"
-        "Detected Unit: {u}\n\n"
-        "A: {a:.4f} {u}\n"
-        "B: {b:.4f} {u}\n\n"
-        "Result: {r:.4f} {u}"
-    ).format(op=op, opname=opname, u=unit, a=A_u, b=B_u, r=R_u)
+        "📊 Operation: {op}\n"
+        "🏠 Detected Units: {u}\n\n"
+        "🔹 A: {a}\n"
+        "🔹 B: {b}\n\n"
+        "✅ Result: {r}"
+    ).format(op=op_choice, u=UNITS[proj_unit]["label"], a=A_fmt, b=B_fmt, r=R_fmt)
 
-    choice = forms.alert(msg + "\n\nChoose action:", title="Elevation Result", options=["Convert", "Copy Result", "Close"])
+    final_choice = forms.alert(
+        msg, 
+        title="LUDARP Elevation Result", 
+        options=["📋 Copy Result", "🎯 Convert Units", "❌ Close"]
+    )
 
-    if choice == "Copy Result":
-        # copy numeric only
-        num = format_num(R_u)
-        try:
-            script.clipboard_copy(num)
-            forms.alert("Copied: {} {}".format(num, unit), title="Copied")
-        except Exception:
-            forms.alert("Could not copy value:\n{}".format(num), title="Copy failed")
-        return
-
-    if choice == "Convert":
-        conversion_and_copy_loop(res_ft)
-        return
-
-    # Close -> do nothing
-    return
+    if final_choice == "📋 Copy Result":
+        script.clipboard_copy(R_fmt)
+        forms.toast("Result copied!")
+    elif final_choice == "🎯 Convert Units":
+        conversion_loop(doc, res_ft)
 
 if __name__ == "__main__":
     main()
+
