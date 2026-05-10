@@ -1,32 +1,26 @@
 # -*- coding: utf-8 -*-
-__title__ = "Change\nColors"
-__doc__ = """Bulk Update Filter Graphics:
-Step 1: Pick the TARGET View or Template.
-Step 2: Select the Filter(s) you want to change.
-Step 3: Choose which properties to override (Fills or Lines).
-Step 4: Pick a New Color (Windows Color Picker).
-Step 5: Pick a New Fill Pattern (if Fills were selected).
+"""
+🎨 LUDARP Filter Override: Change Colors
+Version: 1.2 | Author: PRADUL P
 
-_____________________________________________________________________
-Version: 1.1 | Author: PRADUL P"""
+This script allows users to bulk-update graphic overrides (colors and patterns) 
+for multiple filters within a selected view or template.
+"""
+__title__ = "Change Colors"
 __author__ = "PRADUL P"
-__version__ = "1.1"
+__version__ = "1.2"
 
 from Autodesk.Revit.DB import *
-from pyrevit import revit, forms, script
-
-# Import .NET color dialog
-import clr
-clr.AddReference("System.Windows.Forms")
-from System.Windows.Forms import ColorDialog, DialogResult
-
-doc = revit.doc
-
+from pyrevit import forms, script
 from collections import OrderedDict
 
-# ---------------------------
-# UI Helpers for View Selection
-# ---------------------------
+# Initialize the document
+doc = __revit__.ActiveUIDocument.Document
+
+# ---------------------------------------------------------------------------------
+# UI HELPERS: CATEGORIZED VIEW PICKER
+# ---------------------------------------------------------------------------------
+
 valid_types = [
     ViewType.FloorPlan, ViewType.CeilingPlan, ViewType.Elevation, 
     ViewType.ThreeD, ViewType.Section, ViewType.Detail, 
@@ -34,36 +28,41 @@ valid_types = [
 ]
 
 class ViewItem:
+    """Wrapper class for Revit View elements to display with custom labels/emojis."""
     def __init__(self, view):
         self.view = view
         self.Id = view.Id
         if view.IsTemplate:
             self.Name = "   🎨 [Template] " + view.Name
         else:
-            self.Name = "   📄 [" + str(view.ViewType).replace("ViewType.", "").replace("ThreeD", "3D") + "] " + view.Name
+            v_type_str = str(view.ViewType).replace("ViewType.", "").replace("ThreeD", "3D")
+            self.Name = "   📄 [" + v_type_str + "] " + view.Name
 
 class SeparatorItem:
+    """Used to create non-clickable category headers in the selection list."""
     def __init__(self, title):
         self.Name = "💠 " + title.upper() + " 💠"
         self.view = None
         self.Id = None
 
 def build_view_dict(all_views, exclude_id=None):
+    """Builds a categorized and searchable dictionary of views."""
     all_valid = []
     templates = []
     by_type = {}
     for v in all_views:
         if exclude_id and v.Id == exclude_id: continue
         if v.IsTemplate:
-            item = ViewItem(v)
-            templates.append(item)
+            templates.append(ViewItem(v))
         elif v.ViewType in valid_types:
             item = ViewItem(v)
             cat_name = "📁 " + str(v.ViewType).replace("ViewType.", "").replace("ThreeD", "3D") + "s"
             if cat_name not in by_type: by_type[cat_name] = []
             by_type[cat_name].append(item)
+            
     templates.sort(key=lambda x: x.Name)
     for cat in by_type: by_type[cat].sort(key=lambda x: x.Name)
+    
     if templates:
         all_valid.append(SeparatorItem("VIEW TEMPLATES"))
         all_valid.extend(templates)
@@ -71,131 +70,94 @@ def build_view_dict(all_views, exclude_id=None):
         if by_type[cat]:
             all_valid.append(SeparatorItem(cat.replace("📁 ", "")))
             all_valid.extend(by_type[cat])
+            
     d = OrderedDict()
     d[" 🌍 ALL VIEWS & TEMPLATES"] = all_valid
     d["⭐ VIEW TEMPLATES"] = templates
     for cat in sorted(by_type.keys()): d[cat] = by_type[cat]
     return d
 
-# ---------------- MAIN ---------------- #
+# ---------------------------------------------------------------------------------
+# MAIN SCRIPT EXECUTION
+# ---------------------------------------------------------------------------------
 
-# Step 1: Pick Target View/Template
-all_views = FilteredElementCollector(doc).OfClass(View)
-target_option = forms.SelectFromList.show(
-    build_view_dict(all_views),
-    name_attr="Name",
-    multiselect=False,
-    title="Step 1: Pick TARGET View or Template"
-)
-if not target_option or target_option.view is None:
-    forms.alert("Operation cancelled.")
-    script.exit()
-target_view = target_option.view
-
-# Step 2: Pick Filters to Modify
-filters = target_view.GetFilters()
-filter_elems = [doc.GetElement(fid) for fid in filters]
-filter_names = [f.Name for f in filter_elems]
-
-if not filter_names:
-    forms.alert("No filters applied in the selected view/template.")
-    script.exit()
-
-target_names = forms.SelectFromList.show(
-    filter_names,
-    title="Step 2: Pick Filter(s) to Modify",
-    multiselect=True
-)
-if not target_names:
-    script.exit()
-
-target_elems = [f for f in filter_elems if f.Name in target_names]
-
-# ---------------------------
-# Choose which part(s) to change
-# ---------------------------
-prop_choices = forms.SelectFromList.show(
-    [
-        "Projection Fill Foreground",
-        "Projection Fill Background",
-        "Cut Fill Foreground",
-        "Cut Fill Background",
-        "Projection Line Color",
-        "Cut Line Color"
-    ],
-    title="Select Override Property(ies) to Change",
-    multiselect=True
-)
-if not prop_choices:
-    script.exit()
-
-# ---------------------------
-# Use Windows Color Picker
-# ---------------------------
-cd = ColorDialog()
-cd.AllowFullOpen = True
-cd.FullOpen = True
-
-if cd.ShowDialog() != DialogResult.OK:
-    script.exit()
-
-win_color = cd.Color
-new_color = Color(win_color.R, win_color.G, win_color.B)
-
-# ---------------------------
-# Collect Fill Patterns (if needed)
-# ---------------------------
-pattern_map = {}
-if any("Fill" in pc for pc in prop_choices):
-    fill_patterns = FilteredElementCollector(doc).OfClass(FillPatternElement).ToElements()
-    pattern_names = [fp.Name for fp in fill_patterns]
-    selected_pattern = forms.SelectFromList.show(
-        pattern_names,
-        title="Pick Fill Pattern",
-        multiselect=False
+def main():
+    # 🟦 STEP 1: Select Target View or Template
+    all_views = FilteredElementCollector(doc).OfClass(View)
+    target_option = forms.SelectFromList.show(
+        build_view_dict(all_views),
+        name_attr="Name",
+        multiselect=False,
+        title="1. Pick TARGET View or Template"
     )
-    if not selected_pattern:
+    if not target_option or target_option.view is None:
         script.exit()
-    pattern_elem = next(fp for fp in fill_patterns if fp.Name == selected_pattern)
-    pattern_map["id"] = pattern_elem.Id
+    target_view = target_option.view
 
-# ---------------------------
-# Apply changes
-# ---------------------------
-t = Transaction(doc, "Change Filter Color & Pattern")
-t.Start()
-for f in target_elems:
-    ogs = target_view.GetFilterOverrides(f.Id)
+    # 🟦 STEP 2: Pick Filters to Modify
+    filters_in_view = [doc.GetElement(fid) for fid in target_view.GetFilters()]
+    if not filters_in_view:
+        forms.alert("No filters found in the selected view/template.")
+        script.exit()
 
-    # Projection fills
-    if "Projection Fill Foreground" in prop_choices:
-        ogs.SetSurfaceForegroundPatternColor(new_color)
-        if "id" in pattern_map: 
-            ogs.SetSurfaceForegroundPatternId(pattern_map["id"])
+    selected_filters = forms.SelectFromList.show(
+        filters_in_view,
+        name_attr="Name",
+        multiselect=True,
+        title="2. Pick Filters to Modify"
+    )
+    if not selected_filters:
+        script.exit()
 
-    if "Projection Fill Background" in prop_choices:
-        ogs.SetSurfaceBackgroundPatternColor(new_color)
-        if "id" in pattern_map: 
-            ogs.SetSurfaceBackgroundPatternId(pattern_map["id"])
+    # 🟦 STEP 3: Choose Override Mode (Projection vs Cut)
+    mode = forms.CommandSwitchWindow.show(
+        ["Projection", "Cut"],
+        message="3. Which part of the filter graphics would you like to override?"
+    )
+    if not mode:
+        script.exit()
 
-    # Cut fills
-    if "Cut Fill Foreground" in prop_choices:
-        ogs.SetCutForegroundPatternColor(new_color)
-        if "id" in pattern_map: 
-            ogs.SetCutForegroundPatternId(pattern_map["id"])
+    # 🟦 STEP 4: Pick New Color
+    new_color = forms.ask_for_color()
+    if not new_color:
+        script.exit()
 
-    if "Cut Fill Background" in prop_choices:
-        ogs.SetCutBackgroundPatternColor(new_color)
-        if "id" in pattern_map: 
-            ogs.SetCutBackgroundPatternId(pattern_map["id"])
+    # 🟦 STEP 5: Pick New Pattern
+    all_patterns = FilteredElementCollector(doc).OfClass(FillPatternElement).ToElements()
+    all_patterns = sorted(all_patterns, key=lambda p: p.Name)
+    
+    new_pattern = forms.SelectFromList.show(
+        all_patterns,
+        name_attr="Name",
+        multiselect=False,
+        title="4. Select New Fill Pattern"
+    )
+    if not new_pattern:
+        script.exit()
 
-    # Line colors
-    if "Projection Line Color" in prop_choices:
-        ogs.SetProjectionLineColor(new_color)
-    if "Cut Line Color" in prop_choices:
-        ogs.SetCutLineColor(new_color)
+    # 🟩 EXECUTE: Apply changes via Transaction
+    t = Transaction(doc, "LUDARP: Bulk Change Filter Colors")
+    t.Start()
+    
+    for f in selected_filters:
+        # Get current overrides to preserve other properties (halftone, etc.)
+        ogs = target_view.GetFilterOverrides(f.Id)
+        
+        if mode == "Projection":
+            ogs.SetSurfaceForegroundPatternId(new_pattern.Id)
+            ogs.SetSurfaceForegroundPatternColor(new_color)
+        else:
+            ogs.SetCutForegroundPatternId(new_pattern.Id)
+            ogs.SetCutForegroundPatternColor(new_color)
+            
+        target_view.SetFilterOverrides(f.Id, ogs)
+        
+    t.Commit()
 
-    target_view.SetFilterOverrides(f.Id, ogs)
+    # 🎉 SUCCESS
+    forms.toast("Filter colors updated successfully!")
+    forms.alert("Updated {} filter(s) in '{}'.".format(len(selected_filters), target_view.Name), 
+                title="LUDARP: Change Colors")
 
-t.Commit()
-forms.alert("Updated {} filter(s) in '{}' with new color/pattern.".format(len(target_elems), target_view.Name), title="Done")
+if __name__ == "__main__":
+    main()
