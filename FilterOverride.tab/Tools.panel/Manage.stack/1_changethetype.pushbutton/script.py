@@ -1,6 +1,16 @@
 # -*- coding: utf-8 -*-
-# pyRevit script: Change Filter Pattern Colors & Patterns (Pick Template/View)
-# Author: PRADUL
+__title__ = "Change\nColors"
+__doc__ = """Bulk Update Filter Graphics:
+Step 1: Pick the TARGET View or Template.
+Step 2: Select the Filter(s) you want to change.
+Step 3: Choose which properties to override (Fills or Lines).
+Step 4: Pick a New Color (Windows Color Picker).
+Step 5: Pick a New Fill Pattern (if Fills were selected).
+
+_____________________________________________________________________
+Version: 1.1 | Author: PRADUL P"""
+__author__ = "PRADUL P"
+__version__ = "1.1"
 
 from Autodesk.Revit.DB import *
 from pyrevit import revit, forms, script
@@ -12,23 +22,77 @@ from System.Windows.Forms import ColorDialog, DialogResult
 
 doc = revit.doc
 
-# ---------------------------
-# Ask user to select target view or template
-# ---------------------------
-views_and_templates = [v for v in FilteredElementCollector(doc).OfClass(View)]
-target_view = forms.SelectFromList.show(
-    views_and_templates,
-    name_attr="Name",
-    multiselect=False,
-    title="Pick Target View or Template"
-)
-if not target_view:
-    forms.alert("No view/template selected.")
-    script.exit()
+from collections import OrderedDict
 
 # ---------------------------
-# Collect filters in the chosen view/template
+# UI Helpers for View Selection
 # ---------------------------
+valid_types = [
+    ViewType.FloorPlan, ViewType.CeilingPlan, ViewType.Elevation, 
+    ViewType.ThreeD, ViewType.Section, ViewType.Detail, 
+    ViewType.EngineeringPlan, ViewType.AreaPlan
+]
+
+class ViewItem:
+    def __init__(self, view):
+        self.view = view
+        self.Id = view.Id
+        if view.IsTemplate:
+            self.Name = "   🎨 [Template] " + view.Name
+        else:
+            self.Name = "   📄 [" + str(view.ViewType).replace("ViewType.", "").replace("ThreeD", "3D") + "] " + view.Name
+
+class SeparatorItem:
+    def __init__(self, title):
+        self.Name = "💠 " + title.upper() + " 💠"
+        self.view = None
+        self.Id = None
+
+def build_view_dict(all_views, exclude_id=None):
+    all_valid = []
+    templates = []
+    by_type = {}
+    for v in all_views:
+        if exclude_id and v.Id == exclude_id: continue
+        if v.IsTemplate:
+            item = ViewItem(v)
+            templates.append(item)
+        elif v.ViewType in valid_types:
+            item = ViewItem(v)
+            cat_name = "📁 " + str(v.ViewType).replace("ViewType.", "").replace("ThreeD", "3D") + "s"
+            if cat_name not in by_type: by_type[cat_name] = []
+            by_type[cat_name].append(item)
+    templates.sort(key=lambda x: x.Name)
+    for cat in by_type: by_type[cat].sort(key=lambda x: x.Name)
+    if templates:
+        all_valid.append(SeparatorItem("VIEW TEMPLATES"))
+        all_valid.extend(templates)
+    for cat in sorted(by_type.keys()):
+        if by_type[cat]:
+            all_valid.append(SeparatorItem(cat.replace("📁 ", "")))
+            all_valid.extend(by_type[cat])
+    d = OrderedDict()
+    d[" 🌍 ALL VIEWS & TEMPLATES"] = all_valid
+    d["⭐ VIEW TEMPLATES"] = templates
+    for cat in sorted(by_type.keys()): d[cat] = by_type[cat]
+    return d
+
+# ---------------- MAIN ---------------- #
+
+# Step 1: Pick Target View/Template
+all_views = FilteredElementCollector(doc).OfClass(View)
+target_option = forms.SelectFromList.show(
+    build_view_dict(all_views),
+    name_attr="Name",
+    multiselect=False,
+    title="Step 1: Pick TARGET View or Template"
+)
+if not target_option or target_option.view is None:
+    forms.alert("Operation cancelled.")
+    script.exit()
+target_view = target_option.view
+
+# Step 2: Pick Filters to Modify
 filters = target_view.GetFilters()
 filter_elems = [doc.GetElement(fid) for fid in filters]
 filter_names = [f.Name for f in filter_elems]
@@ -37,12 +101,9 @@ if not filter_names:
     forms.alert("No filters applied in the selected view/template.")
     script.exit()
 
-# ---------------------------
-# Pick filters to modify
-# ---------------------------
 target_names = forms.SelectFromList.show(
     filter_names,
-    title="Pick Filters to Modify",
+    title="Step 2: Pick Filter(s) to Modify",
     multiselect=True
 )
 if not target_names:
