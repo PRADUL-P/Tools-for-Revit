@@ -1,6 +1,5 @@
-# 🎨 Filter Override Tools for Revit
-
-A powerful pyRevit extension designed to streamline the management of **View Filters** and **Graphic Overrides**. This toolkit provides a standardized workflow for duplicating, synchronizing, and bulk-editing filter graphics across views and templates.
+# 🎨 LUDARP Filter Override & Calculator Tools
+A powerful pyRevit extension designed to streamline the management of **View Filters**, **Graphic Overrides**, and **Numeric Calculations**. This toolkit provides a standardized workflow for duplicating, synchronizing, and bulk-editing Revit data.
 
 ---
 
@@ -81,7 +80,7 @@ Detailed documentation and video guides are available here: [Google Docs](https:
 
 ## 👤 Author Information
 - **Author:** PRADUL P
-- **Version:** 1.1
+- **Version:** 1.5
 - **Platform:** pyRevit / Revit API
 
 ---
