@@ -5,7 +5,7 @@ Robust extraction + Unit Conversion + Math Operations.
 Fixed: Unit conversion now correctly respects selected target units.
 """
 __title__ = "Calculator"
-__author__ = "PRADUL P / Antigravity"
+__author__ = "PRADUL P"
 
 import math
 from pyrevit import revit, forms, script
