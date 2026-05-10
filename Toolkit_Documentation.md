@@ -49,7 +49,7 @@ The scripts are organized under the **FilterOverride** tab in the pyRevit ribbon
 3. Choose properties to override: **Fills** or **Lines**.
 4. Select a new color via the Windows Color Picker.
 5. Pick a new fill pattern (if modifying fills).
-**Example:** Update all "Wall" filters to a specific corporate red foreground fill.
+**Example:** Change Wall foreground fill to "Solid Red" and Door cut lines to "Black" in the *First Floor Plan*.
 
 ### 3.2 Copy Between Views
 **Purpose:** Transfer selected filters and their overrides from a source view to multiple targets.
@@ -57,6 +57,7 @@ The scripts are organized under the **FilterOverride** tab in the pyRevit ribbon
 1. Select the **Source** view or template.
 2. Select one or more **Target** views/templates.
 3. Choose exactly which filters to copy.
+**Example:** Copy the "Doors_Fire_Rating" filter overrides from the *Ground Floor* template to the *Second Floor* and *Roof Plan* views.
 **Features:** Automatically adds missing filters to targets and synchronizes all graphic properties.
 
 ### 3.3 Copy Specific Overrides
@@ -66,7 +67,7 @@ The scripts are organized under the **FilterOverride** tab in the pyRevit ribbon
 2. Select the **Source Filter** (the reference style).
 3. Select **Target Filters** (the receivers).
 4. Select properties to copy: *Projection Lines/Fills, Cut Lines/Fills, Transparency, Halftone, etc.*
-**Example:** Copy only the projection fill pattern from the "Fire Wall" filter to the "Smoke Wall" filter.
+**Example:** Copy only the **Projection Fill** (color and pattern) from the "Structural Walls" filter to the "Architecture Walls" filter to ensure color coding matches.
 
 ### 3.4 Duplicate Filter
 **Purpose:** Create a perfect clone of an existing parameter filter, preserving all categories and rules.
@@ -74,13 +75,15 @@ The scripts are organized under the **FilterOverride** tab in the pyRevit ribbon
 1. Pick the view containing the source filter.
 2. Select the **Source Filter**.
 3. Enter a **New Name** for the duplicate.
+**Example:** Duplicate the "Wall Hatch_Global" filter as "Wall Hatch_Zonal_A" in the *General Arrangement* template.
 **Result:** The script clones the filter and automatically preserves its graphic overrides.
 
 ### 3.5 Reset Filters
 **Purpose:** Clean up views by removing all graphic overrides from selected filters.
 **Procedure:**
 1. Select the target view or template.
-2. Pick the filters to be cleared.
+2. Pick the the filters to be cleared.
+**Example:** Reset the "Door_Highlight" and "Furniture_Override" filters in the *Presentation View* to restore standard project graphics.
 **Result:** Filters return to their default appearance while remaining in the view.
 
 ---
