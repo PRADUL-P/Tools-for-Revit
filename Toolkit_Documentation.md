@@ -2,7 +2,7 @@
 
 **Author:** PRADUL P  
 **Date:** 2026-05-10  
-**Version:** 1.4  
+**Version:** 1.5  
 
 ---
 
@@ -15,7 +15,7 @@
    - 3.3 [Copy Specific Overrides](#33-copy-specific-overrides)
    - 3.4 [Duplicate Filter](#34-duplicate-filter)
    - 3.5 [Reset Filters](#35-reset-filters)
-   - 3.6 [Elevation Calculator](#36-elevation-calculator)
+   - 3.6 [Calculator](#36-calculator)
 4. [Usage Tips](#usage-tips)
 5. [Examples](#examples)
 6. [Revision History](#revision-history)
@@ -37,7 +37,7 @@ The scripts are organized under the **LUDARP** tab in the pyRevit ribbon. The to
 | **Manage: Change Colors** | Bulk update colors and fill patterns for multiple filters. |
 | **Manage: Duplicate** | Clone parameter filters along with their categories and rules. |
 | **Manage: Reset** | Clear all overrides to return filters to project default settings. |
-| **Calculator: Elevation** | Extract and convert elevation data from levels, dimensions, or points. |
+| **Calculator: Calculator** | Extract and convert numeric data from levels, dimensions, or points. |
 
 ---
 
@@ -88,13 +88,13 @@ The scripts are organized under the **LUDARP** tab in the pyRevit ribbon. The to
 **Example:** Reset the "Door_Highlight" and "Furniture_Override" filters in the *Presentation View* to restore standard project graphics.
 **Result:** Filters return to their default appearance while remaining in the view.
 
-### 3.6 Elevation Calculator
-**Purpose:** Extract numeric elevation data from Revit elements (Levels, Spot Dimensions, etc.) or pick-points, with built-in unit conversion.
+### 3.6 Calculator
+**Purpose:** Extract numeric data from Revit elements (Levels, Spot Dimensions, Dimensions, etc.) or pick-points, with built-in unit conversion.
 **Procedure:**
-1. Pick a **Level**, **Spot Dimension**, or **Physical Point** in the model.
-2. View the extracted elevation value in the popup.
+1. Pick a **Level**, **Dimension**, **Spot Dimension**, or **Physical Point** in the model.
+2. View the extracted value in the popup.
 3. Select **Copy** to save the value to clipboard or **Convert** to change units.
-**Example:** Extract the top-of-footing elevation and copy it directly into a coordination spreadsheet.
+**Example:** Extract a dimension value or a top-of-footing elevation and copy it directly into a coordination spreadsheet.
 
 ---
 
@@ -120,6 +120,7 @@ The scripts are organized under the **LUDARP** tab in the pyRevit ribbon. The to
 | 1.2 | 2026-05-10 | PRADUL P | **Major Update**: Renamed tab to `FilterOverride`, restructured tools into the `Manage` stack, and optimized tool workflows. |
 | 1.3 | 2026-05-10 | PRADUL P | Added **Calculator** panel and **Elevation Calculator** tool. |
 | 1.4 | 2026-05-10 | PRADUL P | Renamed Tab to **LUDARP** and Primary Panel to **FilterOverride**. |
+| 1.5 | 2026-05-10 | PRADUL P | Renamed **Elevation Calculator** to **Calculator** for broader utility. |
 
 ---
 *Developed with ❤️ for BIM Efficiency.*

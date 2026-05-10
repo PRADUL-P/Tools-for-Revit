@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-📐 LUDARP Elevation Calculator v1.6
+📐 LUDARP Calculator v1.7
 Robust extraction + Unit Conversion + Math Operations.
 Fixed: Unit conversion now correctly respects selected target units.
 """
-__title__ = "Elevation\nCalculator"
+__title__ = "Calculator"
 __author__ = "PRADUL P / Antigravity"
 
 import math
@@ -123,12 +123,12 @@ def extract_elevation(doc, reference):
 
     # 6. Fallback
     choice = forms.alert(
-        "Could not auto-extract elevation from '{}'.\nWould you like to pick a manual point?".format(el.Name),
+        "Could not auto-extract value from '{}'.\nWould you like to pick a manual point?".format(el.Name),
         options=["Yes, pick point", "No, cancel"],
         title="Extraction Fallback"
     )
     if choice == "Yes, pick point":
-        pt = safe_pick_point(revit.uidoc, "📍 Pick a point to define elevation")
+        pt = safe_pick_point(revit.uidoc, "📍 Pick a point to define value")
         if pt: return pt.Z
 
     return None
@@ -165,7 +165,7 @@ def main():
     doc = revit.doc
     uidoc = revit.uidoc
 
-    # Step 1: Pick Elevations
+    # Step 1: Pick Values
     refA = safe_pick_object(uidoc, "1️⃣ Pick First Element (Level/Spot/Dimension)")
     if not refA: return
     
@@ -210,7 +210,7 @@ def main():
 
     final_choice = forms.alert(
         msg, 
-        title="LUDARP Elevation Result", 
+        title="LUDARP Calculator Result", 
         options=["📋 Copy Result", "🎯 Convert Units", "❌ Close"]
     )
 
