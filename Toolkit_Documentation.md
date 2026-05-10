@@ -15,6 +15,7 @@
    - 3.3 [Copy Specific Overrides](#33-copy-specific-overrides)
    - 3.4 [Duplicate Filter](#34-duplicate-filter)
    - 3.5 [Reset Filters](#35-reset-filters)
+   - 3.6 [Elevation Calculator](#36-elevation-calculator)
 4. [Usage Tips](#usage-tips)
 5. [Examples](#examples)
 6. [Revision History](#revision-history)
@@ -36,6 +37,7 @@ The scripts are organized under the **FilterOverride** tab in the pyRevit ribbon
 | **Manage: Change Colors** | Bulk update colors and fill patterns for multiple filters. |
 | **Manage: Duplicate** | Clone parameter filters along with their categories and rules. |
 | **Manage: Reset** | Clear all overrides to return filters to project default settings. |
+| **Calculator: Elevation** | Extract and convert elevation data from levels, dimensions, or points. |
 
 ---
 
@@ -86,6 +88,14 @@ The scripts are organized under the **FilterOverride** tab in the pyRevit ribbon
 **Example:** Reset the "Door_Highlight" and "Furniture_Override" filters in the *Presentation View* to restore standard project graphics.
 **Result:** Filters return to their default appearance while remaining in the view.
 
+### 3.6 Elevation Calculator
+**Purpose:** Extract numeric elevation data from Revit elements (Levels, Spot Dimensions, etc.) or pick-points, with built-in unit conversion.
+**Procedure:**
+1. Pick a **Level**, **Spot Dimension**, or **Physical Point** in the model.
+2. View the extracted elevation value in the popup.
+3. Select **Copy** to save the value to clipboard or **Convert** to change units.
+**Example:** Extract the top-of-footing elevation and copy it directly into a coordination spreadsheet.
+
 ---
 
 ## Usage Tips
@@ -108,6 +118,7 @@ The scripts are organized under the **FilterOverride** tab in the pyRevit ribbon
 | 1.0 | 2025-08-17 | PRADUL P | Initial documentation for pyRevit Filter Overrides Toolkit. |
 | 1.1 | 2025-09-07 | PRADUL P | Added detailed step-by-step procedures and examples. |
 | 1.2 | 2026-05-10 | PRADUL P | **Major Update**: Renamed tab to `FilterOverride`, restructured tools into the `Manage` stack, and optimized tool workflows. |
+| 1.3 | 2026-05-10 | PRADUL P | Added **Calculator** panel and **Elevation Calculator** tool. |
 
 ---
 *Developed with ❤️ for BIM Efficiency.*

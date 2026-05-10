@@ -57,6 +57,14 @@ A powerful pyRevit extension designed to streamline the management of **View Fil
 
 ---
 
+### 🧮 Calculator Panel
+
+#### 📐 Elevation Calculator
+*Extract and convert elevation data in seconds.*
+- **Features:** Supports Levels, Spot Dimensions, and Pick-Points. Includes unit conversion and clipboard support.
+
+---
+
 ## 🔹 Installation Steps
 
 1. Download and extract the repository into your pyRevit extensions folder:
