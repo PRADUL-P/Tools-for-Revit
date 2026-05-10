@@ -7,26 +7,26 @@
 ---
 
 ## Index
-1. [Introduction](#chapter-1-introduction)
-2. [Toolbar Overview](#chapter-2-toolbar-overview)
-3. [Scripts and Procedures](#chapter-3-scripts-and-procedures)
+1. [Introduction](#introduction)
+2. [Toolbar Overview](#toolbar-overview)
+3. [Scripts and Procedures](#scripts-and-procedures)
    - 3.1 [Change Colors](#31-change-colors)
    - 3.2 [Copy Between Views](#32-copy-between-views)
    - 3.3 [Copy Specific Overrides](#33-copy-specific-overrides)
    - 3.4 [Duplicate Filter](#34-duplicate-filter)
    - 3.5 [Reset Filters](#35-reset-filters)
-4. [Usage Tips](#chapter-4-usage-tips)
-5. [Examples](#chapter-5-examples)
-6. [Revision History](#chapter-6-revision-history)
+4. [Usage Tips](#usage-tips)
+5. [Examples](#examples)
+6. [Revision History](#revision-history)
 
 ---
 
-## Chapter 1: Introduction
+## Introduction
 This toolkit provides a professional suite of pyRevit scripts to manage, synchronize, duplicate, and reset Revit filter overrides efficiently. It empowers users to maintain rigorous graphic standards, optimize view management, and ensure template accuracy across complex project environments.
 
 ---
 
-## Chapter 2: Toolbar Overview
+## Toolbar Overview
 The scripts are organized under the **FilterOverride** tab in the pyRevit ribbon. The toolbar is divided into primary tools and a specialized **Manage** stack.
 
 | Tool Name | Description |
@@ -39,7 +39,7 @@ The scripts are organized under the **FilterOverride** tab in the pyRevit ribbon
 
 ---
 
-## Chapter 3: Scripts and Procedures
+## Scripts and Procedures
 
 ### 3.1 Change Colors
 **Purpose:** Bulk update colors and fill patterns of filters in a view or template.
@@ -85,21 +85,21 @@ The scripts are organized under the **FilterOverride** tab in the pyRevit ribbon
 
 ---
 
-## Chapter 4: Usage Tips
+## Usage Tips
 - **Template Focus:** Always perform bulk updates on **View Templates** to ensure changes propagate throughout the project.
 - **Selective Overrides:** Use *Copy Specific Overrides* to update styles without overwriting existing transparency or halftone settings.
 - **Version Control:** Ensure you are using version 1.1+ of the scripts for the most stable performance.
 
 ---
 
-## Chapter 5: Examples
+## Examples
 - **Standardization:** Copy all overrides from a "Window Master" filter to all other window-related filters in a plan view.
 - **Coordination:** Use *Change Colors* to highlight all "MEP Clash" filters in bright yellow during a coordination meeting.
 - **Cleanup:** Reset all overrides in a "Drafting View" before exporting to DWG.
 
 ---
 
-## Chapter 6: Revision History
+## Revision History
 | Version | Date | Author | Description |
 | :--- | :--- | :--- | :--- |
 | 1.0 | 2025-08-17 | PRADUL P | Initial documentation for pyRevit Filter Overrides Toolkit. |
