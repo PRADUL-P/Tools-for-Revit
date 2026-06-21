@@ -8,6 +8,10 @@ __title__ = "Calculator"
 __author__ = "PRADUL P"
 
 import math
+import os
+import json
+import tempfile
+from datetime import datetime
 from pyrevit import revit, forms, script
 from Autodesk.Revit.DB import (
     Level, LocationPoint, SpotDimension, Dimension, BuiltInParameter,
@@ -77,6 +81,57 @@ def safe_pick_point(uidoc, prompt="📍 Pick point"):
     except Exception as e:
         forms.alert("Point pick error:\n{}".format(e), title="Selection Error")
         return None
+
+def get_ref_info(doc, ref):
+    """Resolve element category/type and name from selection reference."""
+    try:
+        el = doc.GetElement(ref)
+        if not el:
+            return "Manual Point"
+        el_type = el.GetType().Name
+        el_name = el.Name
+        if not el_name or el_name == el_type:
+            if hasattr(el, "Category") and el.Category:
+                return "{0} (ID: {1})".format(el.Category.Name, el.Id)
+        return "{0}: {1}".format(el_type, el_name)
+    except Exception:
+        return "Manual Point"
+
+def log_calculation(doc, ref_a, val_a_str, ref_b, val_b_str, op, res_val_str):
+    """Log the calculation to the system temp directory as JSON."""
+    try:
+        temp_dir = tempfile.gettempdir()
+        log_path = os.path.join(temp_dir, "calculator_history.json")
+        
+        history = []
+        if os.path.exists(log_path):
+            with open(log_path, "r") as f:
+                try:
+                    history = json.load(f)
+                except Exception:
+                    pass
+        
+        a_info = get_ref_info(doc, ref_a)
+        b_info = get_ref_info(doc, ref_b)
+        
+        entry = {
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "element_a": a_info,
+            "value_a": val_a_str,
+            "element_b": b_info,
+            "value_b": val_b_str,
+            "operation": op,
+            "result": res_val_str
+        }
+        
+        history.append(entry)
+        # Keep only the last 100 entries
+        history = history[-100:]
+        
+        with open(log_path, "w") as f:
+            json.dump(history, f, indent=4)
+    except Exception:
+        pass
 
 # ---------- Extraction Logic ----------
 def extract_elevation(doc, reference):
@@ -194,11 +249,14 @@ def main():
         forms.alert("Error: Division by zero!", title="Math Error")
         return
 
-    # Step 3: Display Results
+    # Step 3: Display & Log Results
     proj_unit = detect_project_unit(doc)
     A_fmt = format_value(doc, A_ft, proj_unit)
     B_fmt = format_value(doc, B_ft, proj_unit)
     R_fmt = format_value(doc, res_ft, proj_unit)
+
+    # Automatically log the calculation to history
+    log_calculation(doc, refA, A_fmt, refB, B_fmt, op_choice, R_fmt)
 
     msg = (
         "📊 Operation: {op}\n"

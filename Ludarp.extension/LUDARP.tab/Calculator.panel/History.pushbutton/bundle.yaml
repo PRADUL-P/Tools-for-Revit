@@ -1,0 +1,21 @@
+title: Calc History
+tooltip: >
+  View the history of recent calculations, copy previous results, 
+  and export the history log to CSV.
+
+description: |
+  Opens a dialog containing a history log of recent calculations performed
+  with the LUDARP Calculator. 
+
+  Features:
+  - View calculation timestamps, operands, operators, and results.
+  - Copy specific calculation results back to the clipboard.
+  - Clear the log.
+  - Export the history to a CSV file.
+
+# Metadata
+author: PRADUL P
+version: 1.2
+date: 2026-06-21
+icon: icon.png
+tags: [calculator, history, logs, export, csv]

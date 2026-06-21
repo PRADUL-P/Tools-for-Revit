@@ -1,8 +1,8 @@
 # 📘 LUDARP Filter Override & Calculator Toolkit
 
 **Author:** PRADUL P  
-**Date:** 2026-05-10  
-**Version:** 1.5  
+**Date:** 2026-06-21  
+**Version:** 1.6  
 
 ---
 
@@ -22,6 +22,7 @@ The scripts are organized under the **LUDARP** tab in the pyRevit ribbon. The to
 | **Manage: Duplicate** | Clone parameter filters along with their categories and rules. |
 | **Manage: Reset** | Clear all overrides to return filters to project default settings. |
 | **Calculator: Calculator** | Extract and convert numeric data from levels, dimensions, or points. |
+| **Calculator: Calc History** | View calculation history, copy past results, and export to CSV. |
 
 ---
 
@@ -77,6 +78,16 @@ The scripts are organized under the **LUDARP** tab in the pyRevit ribbon. The to
 3. Select **Copy** to save the value to clipboard or **Convert** to change units.  
 **Example:** Extract a dimension value or a top-of-footing elevation and copy it directly into a coordination spreadsheet.
 
+### 3.7 Calc History
+**Purpose:** View the history of recent calculations, copy previous results, clear the history, or export the log to a CSV file.  
+**Procedure:**
+1. Click the **Calc History** button on the ribbon.
+2. Review past calculation logs (stored in the system `%TEMP%` directory).
+3. Select an entry and click **Copy Result** to copy the result to your clipboard.
+4. Click **Export CSV** to save the calculation log to a file.
+5. Click **Clear All** to clear the calculation log.  
+**Example:** Export a list of all operations performed today to a CSV spreadsheet for logging or documentation.
+
 ---
 
 ## 4. Usage Tips
@@ -91,6 +102,7 @@ The scripts are organized under the **LUDARP** tab in the pyRevit ribbon. The to
 - **1.1 (2025-09-07):** Added detailed step-by-step procedures and examples.
 - **1.2 (2026-05-10):** Renamed tab to **FilterOverride** and restructured tools into the **Manage** stack.
 - **1.5 (2026-05-10):** Major Update: Renamed Tab to **LUDARP**, added the **Calculator** tool, and added detailed internal code documentation.
+- **1.6 (2026-06-21):** Added the **Calc History** tool to log recent calculations and export them to CSV.
 
 ---
 *Developed with ❤️ for BIM Efficiency.*
