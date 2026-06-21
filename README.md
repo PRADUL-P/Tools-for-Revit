@@ -1,5 +1,5 @@
-# 🎨 LUDARP Filter Override & Calculator Tools
-A powerful pyRevit extension designed to streamline the management of **View Filters**, **Graphic Overrides**, and **Numeric Calculations**. This toolkit provides a standardized workflow for duplicating, synchronizing, and bulk-editing Revit data.
+# 🎨 LUDARP PyRevit Toolkit
+A powerful pyRevit extension designed to streamline the management of **View Filters**, **Graphic Overrides**, and **Numeric Calculations**. This toolkit provides a standardized workflow for duplicating, synchronizing, and bulk-editing Revit data, complete with a calculation log and export features.
 
 ---
 
@@ -9,6 +9,7 @@ A powerful pyRevit extension designed to streamline the management of **View Fil
 - **🏷️ Clean Naming**: Automatically converts technical `ThreeD` labels to clean `3D` tags in the UI.
 - **🎭 Emoji-Enhanced UI**: Uses intuitive icons and emojis to help you distinguish between views, folders, and actions at a glance.
 - **⚡ Bulk Operations**: Update multiple filters and multiple views simultaneously, saving hours of manual work.
+- **📊 Calculation Logging**: Automatically logs all calculations to a temporary file for fast review, clipboard copies, and CSV exporting.
 
 ---
 
@@ -60,7 +61,11 @@ A powerful pyRevit extension designed to streamline the management of **View Fil
 
 #### 📐 Calculator
 *Extract and convert numeric data in seconds.*
-- **Features:** Supports Levels, Dimensions, Spot Dimensions, and Pick-Points. Includes unit conversion and clipboard support.
+- **Features:** Supports Levels, Dimensions, Spot Dimensions, and Pick-Points. Includes unit conversion, automatic calculation logging, and clipboard support.
+
+#### 📊 Calc History
+*Review previous calculation logs and export data.*
+- **Features:** Accesses the temporary log (`%TEMP%\calculator_history.json`) to display past calculations. Includes copying previous results to the clipboard, wiping the history, and exporting the calculation log to a structured CSV file with separate element and value columns.
 
 ---
 
@@ -80,7 +85,7 @@ Detailed documentation and video guides are available here: [Google Docs](https:
 
 ## 👤 Author Information
 - **Author:** PRADUL P
-- **Version:** 1.5
+- **Version:** 1.6
 - **Platform:** pyRevit / Revit API
 
 ---
