@@ -1,4 +1,4 @@
-# 📘 LUDARP Filter Override & Calculator Toolkit
+# 📘 LUDARP PyRevit Toolkit
 
 **Author:** PRADUL P  
 **Date:** 2026-06-21  
@@ -7,22 +7,22 @@
 ---
 
 ## 1. Introduction
-This toolkit provides a professional suite of pyRevit scripts to manage, synchronize, duplicate, and reset Revit filter overrides efficiently. It also includes a versatile Calculator for extracting and converting numeric data from Revit elements. It empowers users to maintain rigorous graphic standards, optimize view management, and ensure template accuracy across complex project environments.
+This toolkit provides a professional suite of pyRevit scripts to manage, synchronize, duplicate, and reset Revit filter overrides efficiently. It also includes a versatile Calculator panel for extracting, calculating, logging, and converting numeric data from Revit elements. It empowers users to maintain rigorous graphic standards, optimize view management, and ensure template accuracy across complex project environments.
 
 ---
 
 ## 2. Toolbar Overview
 The scripts are organized under the **LUDARP** tab in the pyRevit ribbon. The toolbar is divided into the **FilterOverride** and **Calculator** panels, with a specialized **Manage** stack.
 
-| Tool Name | Description |
-| :--- | :--- |
-| **Copy Between** | Synchronize filters/overrides between source and multiple target views. |
-| **Copy Overrides** | Granularly copy specific properties (Lines, Fills, etc.) from one filter to another. |
-| **Manage: Change Colors** | Bulk update colors and fill patterns for multiple filters. |
-| **Manage: Duplicate** | Clone parameter filters along with their categories and rules. |
-| **Manage: Reset** | Clear all overrides to return filters to project default settings. |
-| **Calculator: Calculator** | Extract and convert numeric data from levels, dimensions, or points. |
-| **Calculator: Calc History** | View calculation history, copy past results, and export to CSV. |
+| Tool Name | Panel / Stack | Description |
+| :--- | :--- | :--- |
+| **Copy Between** | FilterOverride | Synchronize filters/overrides between source and multiple target views. |
+| **Copy Overrides** | FilterOverride | Granularly copy specific properties (Lines, Fills, etc.) from one filter to another. |
+| **Change Colors** | FilterOverride (Manage) | Bulk update colors and fill patterns for multiple filters. |
+| **Duplicate** | FilterOverride (Manage) | Clone parameter filters along with their categories and rules. |
+| **Reset** | FilterOverride (Manage) | Clear all overrides to return filters to project default settings. |
+| **Calculator** | Calculator | Extract and convert numeric data from levels, dimensions, or points. |
+| **Calc History** | Calculator | View the history of recent calculations, copy previous results, and export to CSV. |
 
 ---
 
@@ -71,7 +71,7 @@ The scripts are organized under the **LUDARP** tab in the pyRevit ribbon. The to
 **Example:** Reset the "Door_Highlight" and "Furniture_Override" filters in the *Presentation View*.
 
 ### 3.6 Calculator
-**Purpose:** Extract numeric data from Revit elements (Levels, Spot Dimensions, Dimensions, etc.) or pick-points, with built-in unit conversion.  
+**Purpose:** Extract numeric data from Revit elements (Levels, Spot Dimensions, Dimensions, etc.) or pick-points, with built-in unit conversion and automatic history logging.  
 **Procedure:**
 1. Pick a **Level**, **Dimension**, **Spot Dimension**, or **Physical Point** in the model.
 2. View the extracted value in the popup.
@@ -79,25 +79,33 @@ The scripts are organized under the **LUDARP** tab in the pyRevit ribbon. The to
 **Example:** Extract a dimension value or a top-of-footing elevation and copy it directly into a coordination spreadsheet.
 
 ### 3.7 Calc History
-**Purpose:** View the history of recent calculations, copy previous results, clear the history, or export the log to a CSV file.  
+**Purpose:** View the history of recent calculations, copy previous results, clear the history log, or export the log to a CSV file.  
 **Procedure:**
 1. Click the **Calc History** button on the ribbon.
 2. Review past calculation logs (stored in the system `%TEMP%` directory).
-3. Select an entry and click **Copy Result** to copy the result to your clipboard.
-4. Click **Export CSV** to save the calculation log to a file.
-5. Click **Clear All** to clear the calculation log.  
-**Example:** Export a list of all operations performed today to a CSV spreadsheet for logging or documentation.
+3. Select an entry and click **📋 Copy Result** to copy the result to your clipboard.
+4. Click **📤 Export CSV** to export the calculation history to a CSV file with separate columns for element name and values.
+5. Click **🧹 Clear All** to wipe the local log.  
+**Example:** Export a list of all operations performed today to a CSV spreadsheet for logging or coordination documentation.
 
 ---
 
-## 4. Usage Tips
+## 4. Installation Steps
+1. Download and extract the repository into your pyRevit extensions folder:  
+   `C:\Users\username\AppData\Roaming\pyRevit-Master\extensions`
+2. Open Revit and go to **pyRevit > Reload**.
+3. You should now see the **LUDARP** tab in your ribbon.
+
+---
+
+## 5. Usage Tips
 - **Template Focus:** Always perform bulk updates on **View Templates** to ensure changes propagate throughout the project.
 - **Selective Overrides:** Use *Copy Specific Overrides* to update styles without overwriting existing transparency or halftone settings.
 - **Reloading:** After updating the extension, click **pyRevit > Reload** to refresh the ribbon icons and titles.
 
 ---
 
-## 5. Revision History
+## 6. Revision History
 - **1.0 (2025-08-17):** Initial documentation.
 - **1.1 (2025-09-07):** Added detailed step-by-step procedures and examples.
 - **1.2 (2026-05-10):** Renamed tab to **FilterOverride** and restructured tools into the **Manage** stack.
