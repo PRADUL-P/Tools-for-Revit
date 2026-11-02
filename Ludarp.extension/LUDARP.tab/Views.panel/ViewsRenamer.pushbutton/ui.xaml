@@ -1,0 +1,313 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="✏️ BIMToolkit — Views Renamer (All-in-One)"
+        Height="730" Width="870"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F6F8"
+        FontFamily="Segoe UI"
+        ResizeMode="CanResize"
+        ShowInTaskbar="True">
+
+    <Window.Resources>
+        <!-- Modern Button Style -->
+        <Style x:Key="ModernButton" TargetType="Button">
+            <Setter Property="Background" Value="#E1E4E8"/>
+            <Setter Property="Foreground" Value="#24292E"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Padding" Value="10,0,10,0"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="4"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+
+        <!-- Primary Button Style -->
+        <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource ModernButton}">
+            <Setter Property="Background" Value="#007ACC"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <!-- Field Label Style -->
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="Margin" Value="0,2,0,2"/>
+            <Setter Property="FontSize" Value="11"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1.2*"/>
+            <RowDefinition Height="1.1*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,8">
+            <TextBlock Text="✏️ Views Renamer — Interactive Control Center" FontSize="18" FontWeight="Bold" Foreground="#1A1A1A"/>
+            <TextBlock Text="Filter by discipline, sort naturally, and apply ISO 19650 (Auto / Custom) or custom naming rules on one screen." FontSize="11" Foreground="#666666" Margin="0,2,0,0"/>
+        </StackPanel>
+
+        <!-- ROW 1: Integrated Filter & Sorting Bar -->
+        <Border Grid.Row="1" Background="White" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,0,8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.2*"/>
+                    <ColumnDefinition Width="1.2*"/>
+                    <ColumnDefinition Width="1.3*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Filter by Discipline -->
+                <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                    <TextBlock Text="Filter Discipline:" Style="{StaticResource FieldLabel}"/>
+                    <ComboBox Name="DisciplineFilterCombo" Height="26" VerticalContentAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Filter by View Type -->
+                <StackPanel Grid.Column="1" Margin="3,0,3,0">
+                    <TextBlock Text="Filter View Type:" Style="{StaticResource FieldLabel}"/>
+                    <ComboBox Name="ViewTypeFilterCombo" Height="26" VerticalContentAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Sort Order -->
+                <StackPanel Grid.Column="2" Margin="3,0,3,0">
+                    <TextBlock Text="Sort Order:" Style="{StaticResource FieldLabel}"/>
+                    <ComboBox Name="SortOrderCombo" Height="26" VerticalContentAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Search box -->
+                <StackPanel Grid.Column="3" Margin="6,0,0,0">
+                    <TextBlock Text="Search Name:" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Name="SearchInput" Height="26" VerticalContentAlignment="Center" Padding="4,0,4,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ROW 2: Split Views: Selection (Left) & Renaming Rules (Right) -->
+        <Grid Grid.Row="2" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.2*"/>
+                <ColumnDefinition Width="1.3*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- LEFT: Views Selection Checklist -->
+            <Border Grid.Column="0" Background="White" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,6,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0" Margin="0,0,0,4">
+                        <TextBlock Name="ViewsCountLabel" Text="Views in Scope (0):" Style="{StaticResource FieldLabel}" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Name="SelectAllBtn" Content="Select All" Style="{StaticResource ModernButton}" Height="22" FontSize="10" Margin="0,0,4,0"/>
+                            <Button Name="DeselectAllBtn" Content="Deselect" Style="{StaticResource ModernButton}" Height="22" FontSize="10"/>
+                        </StackPanel>
+                    </Grid>
+                    <ListView Grid.Row="1" Name="ViewsListView" SelectionMode="Multiple" BorderThickness="1" BorderBrush="#E5E7EB">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="View Name" Width="240" DisplayMemberBinding="{Binding Name}"/>
+                                <GridViewColumn Header="Discipline" Width="80" DisplayMemberBinding="{Binding Discipline}"/>
+                                <GridViewColumn Header="Level" Width="80" DisplayMemberBinding="{Binding LevelName}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </Border>
+
+            <!-- RIGHT: Renaming Rules Configuration -->
+            <Border Grid.Column="1" Background="White" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="6" Padding="10" Margin="6,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Action Selector -->
+                    <StackPanel Grid.Row="0" Margin="0,0,0,8">
+                        <TextBlock Text="Renaming Operation:" Style="{StaticResource FieldLabel}"/>
+                        <ComboBox Name="ActionCombo" Height="26" VerticalContentAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- Panels for each operation -->
+                    <Grid Grid.Row="1">
+                        <!-- Panel: ISO 19650 Standard with AUTO or CUSTOM Override -->
+                        <ScrollViewer Name="IsoPanel" VerticalScrollBarVisibility="Auto" Visibility="Visible">
+                            <StackPanel Margin="0,0,6,0">
+                                <TextBlock Text="🏛️ ISO 19650: [Project]-[Originator]-[Zone]-[Level]-[Type]-[Role]-[Seq]" FontWeight="SemiBold" Foreground="#007ACC" Margin="0,0,0,6" FontSize="11"/>
+
+                                <!-- Project & Originator -->
+                                <Grid Margin="0,0,0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Margin="0,0,4,0">
+                                        <TextBlock Text="Project Code:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox Name="IsoProjectInput" Text="PRJ" Height="24" VerticalContentAlignment="Center"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Margin="4,0,0,0">
+                                        <TextBlock Text="Originator Code:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox Name="IsoOriginatorInput" Text="ARC" Height="24" VerticalContentAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Volume & Level -->
+                                <Grid Margin="0,0,0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Margin="0,0,4,0">
+                                        <TextBlock Text="Volume / Zone:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox Name="IsoZoneInput" Text="ZZ" Height="24" VerticalContentAlignment="Center"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Margin="4,0,0,0">
+                                        <TextBlock Text="Level (AUTO or Custom):" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox Name="IsoLevelInput" Text="AUTO" Height="24" VerticalContentAlignment="Center" ToolTip="Type AUTO or a custom code like 01, B1, RF, ZZ"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Type & Role -->
+                                <Grid Margin="0,0,0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Margin="0,0,4,0">
+                                        <TextBlock Text="Type (AUTO or Custom):" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox Name="IsoTypeInput" Text="AUTO" Height="24" VerticalContentAlignment="Center" ToolTip="Type AUTO (PL/CP/SC/EL) or custom code (e.g. PL, DR, SK)"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Margin="4,0,0,0">
+                                        <TextBlock Text="Role (AUTO or Custom):" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox Name="IsoRoleInput" Text="AUTO" Height="24" VerticalContentAlignment="Center" ToolTip="Type AUTO (A/S/M/E/P/C) or custom code (e.g. A, S, B, K)"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Sequence & Separator -->
+                                <Grid Margin="0,0,0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1.4*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Margin="0,0,4,0">
+                                        <TextBlock Text="Start Sequence #:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox Name="IsoSeqInput" Text="0001" Height="24" VerticalContentAlignment="Center"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Margin="4,0,0,0">
+                                        <TextBlock Text="Delimiter:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox Name="IsoSepInput" Text="-" Height="24" VerticalContentAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <TextBlock Text="💡 Set Level, Type, or Role to 'AUTO' for auto-detection, or type any custom code." Foreground="#007ACC" FontSize="10" Margin="0,3,0,0"/>
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <!-- Panel: Pattern Override -->
+                        <StackPanel Name="PatternPanel" Visibility="Collapsed">
+                            <TextBlock Text="Enter Full Name Pattern: Tokens: [discipline], [type], [level], [seq], [name]" Style="{StaticResource FieldLabel}"/>
+                            <TextBox Name="PatternInput" Height="26" VerticalContentAlignment="Center" Margin="0,2,0,6"/>
+                            <TextBlock Text="Example: [discipline] - [type] - [level]" Foreground="#666666" FontSize="10"/>
+                        </StackPanel>
+
+                        <!-- Panel: Prefix / Suffix -->
+                        <StackPanel Name="PrefixSuffixPanel" Visibility="Collapsed">
+                            <TextBlock Text="Prefix (Prepend):" Style="{StaticResource FieldLabel}"/>
+                            <TextBox Name="PrefixInput" Height="26" VerticalContentAlignment="Center" Margin="0,2,0,4"/>
+                            <TextBlock Text="Suffix (Append):" Style="{StaticResource FieldLabel}"/>
+                            <TextBox Name="SuffixInput" Height="26" VerticalContentAlignment="Center" Margin="0,2,0,0"/>
+                        </StackPanel>
+
+                        <!-- Panel: Find & Replace -->
+                        <StackPanel Name="FindReplacePanel" Visibility="Collapsed">
+                            <TextBlock Text="Find String:" Style="{StaticResource FieldLabel}"/>
+                            <TextBox Name="FindInput" Height="26" VerticalContentAlignment="Center" Margin="0,2,0,4"/>
+                            <TextBlock Text="Replace With:" Style="{StaticResource FieldLabel}"/>
+                            <TextBox Name="ReplaceInput" Height="26" VerticalContentAlignment="Center" Margin="0,2,0,0"/>
+                        </StackPanel>
+
+                        <!-- Panel: Regex -->
+                        <StackPanel Name="RegexPanel" Visibility="Collapsed">
+                            <TextBlock Text="Regex Pattern:" Style="{StaticResource FieldLabel}"/>
+                            <TextBox Name="RegexPatternInput" Height="26" VerticalContentAlignment="Center" Margin="0,2,0,4"/>
+                            <TextBlock Text="Regex Replacement (\1, \2 for groups):" Style="{StaticResource FieldLabel}"/>
+                            <TextBox Name="RegexReplaceInput" Height="26" VerticalContentAlignment="Center" Margin="0,2,0,0"/>
+                        </StackPanel>
+
+                        <!-- Panel: Sequential Numbering -->
+                        <StackPanel Name="SeqPanel" Visibility="Collapsed">
+                            <TextBlock Text="Prefix before number:" Style="{StaticResource FieldLabel}"/>
+                            <TextBox Name="SeqPrefixInput" Text="View " Height="26" VerticalContentAlignment="Center" Margin="0,2,0,4"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Margin="0,0,4,0">
+                                    <TextBlock Text="Start Number:" Style="{StaticResource FieldLabel}"/>
+                                    <TextBox Name="SeqStartInput" Text="1" Height="26" VerticalContentAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Margin="4,0,0,0">
+                                    <TextBlock Text="Zero Padding (Width):" Style="{StaticResource FieldLabel}"/>
+                                    <TextBox Name="SeqPadInput" Text="2" Height="26" VerticalContentAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+
+                        <!-- Panel: Case -->
+                        <StackPanel Name="CasePanel" Visibility="Collapsed">
+                            <TextBlock Text="Case Conversion:" Style="{StaticResource FieldLabel}"/>
+                            <RadioButton Name="UpperRadio" Content="UPPERCASE" IsChecked="True" Margin="0,4,0,2"/>
+                            <RadioButton Name="LowerRadio" Content="lowercase" Margin="0,2,0,2"/>
+                            <RadioButton Name="TitleRadio" Content="Title Case" Margin="0,2,0,2"/>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ROW 3: Live Preview Table -->
+        <Border Grid.Row="3" Background="White" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,0,8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Margin="0,0,0,4">
+                    <TextBlock Text="Live Renaming Preview:" Style="{StaticResource FieldLabel}" VerticalAlignment="Center"/>
+                    <Button Name="RefreshPreviewBtn" Content="🔄 Update Preview" Style="{StaticResource ModernButton}" Height="22" FontSize="10" HorizontalAlignment="Right"/>
+                </Grid>
+                <ListView Grid.Row="1" Name="PreviewListView" BorderThickness="1" BorderBrush="#E5E7EB">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="#" Width="35" DisplayMemberBinding="{Binding Index}"/>
+                            <GridViewColumn Header="Current Name" Width="260" DisplayMemberBinding="{Binding CurrentName}"/>
+                            <GridViewColumn Header="Proposed New Name" Width="280" DisplayMemberBinding="{Binding NewName}"/>
+                            <GridViewColumn Header="Discipline" Width="80" DisplayMemberBinding="{Binding Discipline}"/>
+                            <GridViewColumn Header="Status" Width="90" DisplayMemberBinding="{Binding Status}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Grid>
+        </Border>
+
+        <!-- ROW 4: Action Footer -->
+        <Grid Grid.Row="4">
+            <TextBlock Name="SummaryStatusLabel" Text="Select views and click Apply" Foreground="#666666" VerticalAlignment="Center" FontSize="11"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Name="ApplyBtn" Content="🚀 Apply Renaming" Style="{StaticResource PrimaryButton}" Margin="0,0,8,0" Width="140"/>
+                <Button Name="CancelBtn" Content="Cancel" Style="{StaticResource ModernButton}" Width="80"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

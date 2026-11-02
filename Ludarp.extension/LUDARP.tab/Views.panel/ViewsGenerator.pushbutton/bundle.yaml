@@ -1,0 +1,9 @@
+title: Views Generator
+tooltip: >
+  Batch generate Floor Plans & Reflected Ceiling Plans (RCP)
+  across Architecture, Structural, Mechanical, Electrical, Plumbing,
+  and Coordination disciplines with optional ISO 19650 standard naming.
+
+author: PRADUL P
+version: 1.2
+tags: [views, generator, levels, disciplines, iso19650, rcp, ceiling, mep, architecture, bimtoolkit]

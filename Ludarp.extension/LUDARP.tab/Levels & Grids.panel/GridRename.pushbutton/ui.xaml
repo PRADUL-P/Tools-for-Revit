@@ -1,0 +1,184 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="🔢 BIMToolkit — Grid Rename (TCOUNT)"
+        Height="630" Width="560"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F6F8"
+        FontFamily="Segoe UI"
+        ResizeMode="CanResize"
+        ShowInTaskbar="True">
+
+    <Window.Resources>
+        <!-- Modern Button Style -->
+        <Style x:Key="ModernButton" TargetType="Button">
+            <Setter Property="Background" Value="#E1E4E8"/>
+            <Setter Property="Foreground" Value="#24292E"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="14,0,14,0"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="4"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+
+        <!-- Primary Button Style -->
+        <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource ModernButton}">
+            <Setter Property="Background" Value="#007ACC"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <!-- Danger Button Style -->
+        <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource ModernButton}">
+            <Setter Property="Background" Value="#D9381E"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <!-- Field Label Style -->
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="Margin" Value="0,3,0,2"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,10">
+            <TextBlock Text="🔢 TCOUNT Grid Renamer" FontSize="18" FontWeight="Bold" Foreground="#1A1A1A"/>
+            <TextBlock Text="Directional auto-sorting and sequential renaming (Numeric / Alphabetic)." FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
+        </StackPanel>
+
+        <!-- Grid Selection Scope -->
+        <Border Grid.Row="1" Background="White" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Grids Scope:" Style="{StaticResource FieldLabel}"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                        <RadioButton Name="SelectedOnlyRadio" Content="Active Selection" IsChecked="True" FontWeight="SemiBold" Margin="0,0,16,0"/>
+                        <RadioButton Name="AllGridsRadio" Content="All Project Grids" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </StackPanel>
+                <TextBlock Grid.Column="1" Name="GridCountLabel" Text="0 grids found" FontWeight="SemiBold" Foreground="#007ACC" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <!-- Renaming Mode, Sort Direction & Rules -->
+        <Border Grid.Row="2" Background="White" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,10">
+            <StackPanel>
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Mode -->
+                    <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                        <TextBlock Text="Sequence Type:" Style="{StaticResource FieldLabel}"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                            <RadioButton Name="NumericModeRadio" Content="1, 2, 3..." IsChecked="True" FontWeight="SemiBold" Margin="0,0,12,0"/>
+                            <RadioButton Name="AlphaModeRadio" Content="A, B, C..." FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Start & Increment -->
+                    <Grid Grid.Column="1" Margin="8,0,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,4,0">
+                            <TextBlock Text="Start Val:" Style="{StaticResource FieldLabel}"/>
+                            <TextBox Name="StartInput" Text="1" Height="26" VerticalContentAlignment="Center" Padding="4,0,4,0"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="4,0,0,0">
+                            <TextBlock Text="Increment:" Style="{StaticResource FieldLabel}"/>
+                            <TextBox Name="IncrementInput" Text="1" Height="26" VerticalContentAlignment="Center" Padding="4,0,4,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+
+                <!-- Prefix & Suffix -->
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                        <TextBlock Text="Prefix (Optional):" Style="{StaticResource FieldLabel}"/>
+                        <TextBox Name="PrefixInput" Text="" Height="26" VerticalContentAlignment="Center" Padding="4,0,4,0"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                        <TextBlock Text="Suffix (Optional):" Style="{StaticResource FieldLabel}"/>
+                        <TextBox Name="SuffixInput" Text="" Height="26" VerticalContentAlignment="Center" Padding="4,0,4,0"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Sort Direction -->
+                <TextBlock Text="Auto-Sort Direction:" Style="{StaticResource FieldLabel}"/>
+                <Grid Margin="0,3,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <RadioButton Grid.Column="0" Name="DirLRRadio" Content="Left → Right" IsChecked="True"/>
+                    <RadioButton Grid.Column="1" Name="DirRLRadio" Content="Right → Left"/>
+                    <RadioButton Grid.Column="2" Name="DirBTRadio" Content="Bottom → Top"/>
+                    <RadioButton Grid.Column="3" Name="DirTBRadio" Content="Top → Bottom"/>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <!-- Preview -->
+        <Border Grid.Row="3" Background="White" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,0,0,6">
+                    <TextBlock Text="Rename Sequence Preview:" Style="{StaticResource FieldLabel}" VerticalAlignment="Center"/>
+                    <Button Name="RefreshPreviewBtn" Content="🔄 Refresh Preview" Style="{StaticResource ModernButton}" Height="26" FontSize="11" HorizontalAlignment="Right"/>
+                </Grid>
+
+                <ListView Grid.Row="1" Name="PreviewList" BorderThickness="1" BorderBrush="#E5E7EB">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="#" Width="40" DisplayMemberBinding="{Binding Order}"/>
+                            <GridViewColumn Header="Current Name" Width="170" DisplayMemberBinding="{Binding CurrentName}"/>
+                            <GridViewColumn Header="New Name" Width="170" DisplayMemberBinding="{Binding NewName}"/>
+                            <GridViewColumn Header="Coord / Order" Width="100" DisplayMemberBinding="{Binding Coordinate}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Grid>
+        </Border>
+
+        <!-- Footer -->
+        <Grid Grid.Row="4">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Name="RenameBtn" Content="✏️ Rename Grids" Style="{StaticResource PrimaryButton}" Margin="0,0,8,0" Width="130"/>
+                <Button Name="CancelBtn" Content="Cancel" Style="{StaticResource ModernButton}" Width="80"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

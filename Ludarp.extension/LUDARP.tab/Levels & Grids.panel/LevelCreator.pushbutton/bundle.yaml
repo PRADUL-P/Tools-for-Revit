@@ -1,0 +1,9 @@
+title: Level Creator
+tooltip: >
+  Batch create multiple levels from a reference level.
+  Supports uniform spacing (above or below) or custom offsets per level
+  with an interactive preview.
+
+author: PRADUL P
+version: 1.0
+tags: [levels, create, batch, elevations, bimtoolkit]

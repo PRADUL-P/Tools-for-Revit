@@ -1,0 +1,8 @@
+title: Views Renamer
+tooltip: >
+  Batch rename views with Discipline filtering, natural alphanumeric sorting,
+  Pattern-based full overrides, and ISO 19650 standard naming convention.
+
+author: PRADUL P
+version: 1.2
+tags: [views, rename, batch, iso19650, pattern, natural-sort, discipline, bimtoolkit]

@@ -1,0 +1,9 @@
+title: Grid Rename
+tooltip: >
+  TCOUNT-style sequential grid renamer with directional auto-sorting
+  (Left->Right, Right->Left, Bottom->Top, Top->Bottom).
+  Supports numeric and alphabetic numbering with prefix and suffix.
+
+author: PRADUL P
+version: 1.0
+tags: [grids, rename, tcount, sequence, sort, bimtoolkit]
