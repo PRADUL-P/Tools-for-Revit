@@ -1,5 +1,5 @@
 # 🎨 LUDARP PyRevit Toolkit
-A powerful pyRevit extension designed to streamline the management of **View Filters**, **Graphic Overrides**, and **Numeric Calculations**. This toolkit provides a standardized workflow for duplicating, synchronizing, and bulk-editing Revit data, complete with a calculation log and export features.
+A powerful pyRevit extension designed to streamline the management of **View Filters**, **Graphic Overrides**, **Numeric Calculations**, **Levels & Grids**, and **Multi-Discipline Views**. This toolkit provides standardized workflows for duplicating, synchronizing, and bulk-editing Revit data, complete with ISO 19650 naming standards and calculation history logging.
 
 ---
 
@@ -7,15 +7,17 @@ A powerful pyRevit extension designed to streamline the management of **View Fil
 
 - **📂 Smart Categorization**: All view selection menus are automatically grouped by category (e.g., Floor Plans, Elevations, 3D Views) for rapid navigation.
 - **🏷️ Clean Naming**: Automatically converts technical `ThreeD` labels to clean `3D` tags in the UI.
-- **🎭 Emoji-Enhanced UI**: Uses intuitive icons and emojis to help you distinguish between views, folders, and actions at a glance.
-- **⚡ Bulk Operations**: Update multiple filters and multiple views simultaneously, saving hours of manual work.
+- **🔢 Natural Alphanumeric Sorting**: Intelligent view sorting handles numerical sequences properly (Level 1, Level 2 ... Level 9, Level 10) instead of alphabetical sorting.
+- **🌐 ISO 19650 Compliance**: Standardized naming presets for automated project-, discipline-, level-, and type-coded views.
+- **📏 Automated Level & Grid Generation**: Create multiple building levels with uniform or custom elevation offsets, and rename grids based on physical geometry (X/Y coordinates).
+- **⚡ Bulk Operations**: Update multiple filters, views, levels, and grids simultaneously, saving hours of manual work.
 - **📊 Calculation Logging**: Automatically logs all calculations to a temporary file for fast review, clipboard copies, and CSV exporting.
 
 ---
 
 ## 🛠️ Tool Guide
 
-### 📂 Primary Tools
+### 📂 FilterOverride Panel
 
 #### 🔄 Copy Between Views
 *Copy Filters and Overrides effortlessly.*
@@ -33,7 +35,7 @@ A powerful pyRevit extension designed to streamline the management of **View Fil
 
 ---
 
-### ⚙️ Management Stack
+### ⚙️ Management Stack (FilterOverride)
 
 #### 🎨 Change Colors
 *Bulk update filter graphics in seconds.*
@@ -69,6 +71,30 @@ A powerful pyRevit extension designed to streamline the management of **View Fil
 
 ---
 
+### 📏 Levels & Grids Panel (New in v2.0)
+
+#### 📐 Level Creator
+*Batch create multiple levels from a reference base level.*
+- **Features:** Uniform spacing or custom elevation offsets per level, interactive elevation preview in millimeters, auto-naming with customizable prefix/suffix, and elevation sorting.
+
+#### 🔤 Grid Rename
+*Renumber and rename structural/architectural grids automatically.*
+- **Features:** Geometric directional sorting (Left to Right, Top to Bottom, Auto-detect), custom prefix/starting number, and 2-pass transactions to avoid Revit duplicate grid name errors.
+
+---
+
+### 👁️ Views Panel (New in v2.0)
+
+#### 🏗️ Views Generator
+*Generate multi-discipline floor and ceiling plans simultaneously.*
+- **Features:** Select levels and view types for Architecture, Structure, Mechanical, Electrical, Plumbing, and Coordination. Includes 6 naming presets, including ISO 19650 compliant format (`[Project]-[Role]-[Level]-[Type]-[Seq]`).
+
+#### ✏️ Views Renamer
+*Interactive control center for batch renaming views.*
+- **Features:** Live filtering by discipline and view type, human natural alphanumeric sorting (Level 1, 2, 3... 10), ISO 19650 automated and custom overrides, pattern matching, and search filtering.
+
+---
+
 ## 🔹 Installation Steps
 
 1. Download and extract the repository into your pyRevit extensions folder:
@@ -85,8 +111,9 @@ Detailed documentation and video guides are available here: [Google Docs](https:
 
 ## 👤 Author Information
 - **Author:** PRADUL P
-- **Version:** 1.6
+- **Version:** 2.0
 - **Platform:** pyRevit / Revit API
+- **Last Updated:** 2026-11-02
 
 ---
 *Developed with ❤️ for BIM Efficiency.*
